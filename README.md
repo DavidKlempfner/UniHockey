@@ -1,5 +1,8 @@
 # UniHockey Web App
 
+# Purpose
+To provide a user friendly UI that allows score keeping during tournaments.
+
 # Goals/Milestones
 1.	Set up the application and the GitHub repo. The app should just display simple text.
 2.	Set up CI/CD using VSTS and have it deploy to Azure when the master branch is written to.
