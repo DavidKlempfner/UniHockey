@@ -11,7 +11,7 @@ namespace UniHockey.Controllers
     {
         public ActionResult Index()
         {
-            Tournament tournament = new Tournament { Winner = "David", Loser = "Steve" }; //
+            Tournament tournament = new Tournament { Winner = "David", Loser = "Steve" }; //.
             return View(tournament);
         }
     }
