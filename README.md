@@ -7,9 +7,9 @@
 4.	Begin the first feature of the app which will be to record scores in a game.
 
 # Must have
-•	Dependency injection.
-•	Resource file to store strings so you can use different languages (German).
-•	Security (Authorization and Authentication filters).
-•	Unit tests.
-•	Client-side model validation.
-•	Bundles (to save the number of HTTP requests for JS/CSS files).
+1.	Dependency injection.
+2.	Resource file to store strings so you can use different languages (German).
+3.	Security (Authorization and Authentication filters).
+4.	Unit tests.
+5.	Client-side model validation.
+6.	Bundles (to save the number of HTTP requests for JS/CSS files).
