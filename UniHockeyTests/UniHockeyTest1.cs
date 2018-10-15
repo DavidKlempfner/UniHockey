@@ -16,16 +16,5 @@ namespace UniHockeyTests
             //Assert
             Assert.IsTrue(true);
         }
-
-        [Test]
-        public void TestMethod2()
-        {
-            //Arrange
-
-            //Act
-
-            //Assert
-            Assert.IsTrue(false);
-        }
     }
 }
