@@ -7,7 +7,6 @@ namespace UniHockey.Models
 {
     public class Tournament
     {
-        public string Winner { get; set; }
-        public string Loser { get; set; }
+        public List<Game> Games { get; set; }
     }
 }

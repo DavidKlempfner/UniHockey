@@ -1,0 +1,13 @@
+﻿@using UniHockey.Models
+@model Tournament
+
+
+@foreach (Game item in Model.Games)
+{
+    @*@Html.ActionLink(item.Team1.Name + "vs" + item.Team2.Name, "Index", "Game", new { game = new { item.t } }, null)*@
+
+    @*@using (Html.BeginForm("Index", "Game"))
+    {
+        
+    }*@
+}

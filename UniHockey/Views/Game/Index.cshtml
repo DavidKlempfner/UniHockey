@@ -1,0 +1,35 @@
+﻿@using UniHockey.Models
+@model UniHockey.Models.Game
+@{
+    ViewBag.Title = "Game";
+}
+
+<script src="~/Scripts/App/Game.js"></script>
+
+<h1>@Model.Team1.Name vs @Model.Team2.Name</h1>
+
+<h2>Current Score:</h2>
+<div>
+    @Html.Label(Model.Team1.Name):<input id="Team1Score" type="number" value="0" />
+</div>
+<div>
+    @Html.Label(Model.Team2.Name):<input id="Team2Score" type="number" value="0" />
+</div>
+
+<div id="Team1PlayerScores">
+    @foreach (Player player in Model.Team1.Players)
+    {
+        @Html.Label(player.Name)
+        <input type="button" onclick="incrementPlayerScore(@player.Id)" />
+        <input id="@player.Id" type="number" min="0" max="99" value="0" onchange="updateTeamScore('Team1PlayerScores', 'Team1Score')" />
+    }
+</div>
+
+<div id="Team2PlayerScores">
+    @foreach (Player player in Model.Team2.Players)
+    {
+        @Html.Label(player.Name)
+        <input type="button" onclick="incrementPlayerScore(@player.Id)" />
+        <input id="@player.Id" type="number" min="0" max="99" value="0" onchange="updateTeamScore('Team2PlayerScores', 'Team2Score')" />
+    }
+</div>
