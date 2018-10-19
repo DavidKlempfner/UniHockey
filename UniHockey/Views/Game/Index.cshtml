@@ -9,29 +9,31 @@
 <h1>@Model.Team1.Name vs @Model.Team2.Name</h1>
 
 <h2>Current Score:</h2>
-<div>
-    @Html.Label(Model.Team1.Name):<input id="Team1Score" type="number" value="0" />
-</div>
-<div>
-    @Html.Label(Model.Team2.Name):<input id="Team2Score" type="number" value="0" />
-</div>
+@using (Html.BeginForm("SaveGame", "Game"))
+{
+    <div>
+        @Html.DisplayFor(m => m.Team1.Name):@Html.EditorFor(m => m.Team1.GoalsForCurrentGame, new { htmlAttributes = new { @readonly = "readonly" } })
+    </div>
+    <div>
+        @Html.DisplayFor(m => m.Team2.Name):@Html.EditorFor(m => m.Team2.GoalsForCurrentGame, new { htmlAttributes = new { @readonly = "readonly" } })
+    </div>
 
-<div id="Team1PlayerScores">
-    @foreach (Player player in Model.Team1.Players)
-    {
-        @Html.Label(player.Name)
-        <input type="button" onclick="incrementPlayerScore(@player.Id)" />
-        <input id="@player.Id" type="number" min="0" max="99" value="0" onchange="updateTeamScore('Team1PlayerScores', 'Team1Score')" />
-    }
-</div>
+    <div id="Team1PlayerScores">
+        @for (int i = 0; i < Model.Team1.Players.Count; i++)
+        {
+            @Html.DisplayFor(m => m.Team1.Players[i].Name)
+            @Html.EditorFor(m => m.Team1.Players[i].GoalsForCurrentGame, new { htmlAttributes = new { min = 0, max = 99, onchange = "updateTeamScore('Team1PlayerScores', 'Team1_GoalsForCurrentGame')" } })
+        }
+    </div>
 
-<div id="Team2PlayerScores">
-    @foreach (Player player in Model.Team2.Players)
-    {
-        @Html.Label(player.Name)
-        <input type="button" onclick="incrementPlayerScore(@player.Id)" />
-        <input id="@player.Id" type="number" min="0" max="99" value="0" onchange="updateTeamScore('Team2PlayerScores', 'Team2Score')" />
-    }
-</div>
+    <div id="Team2PlayerScores">
+        @for (int i = 0; i < Model.Team2.Players.Count; i++)
+        {
+            @Html.DisplayFor(m => m.Team2.Players[i].Name)
+            @Html.EditorFor(m => m.Team2.Players[i].GoalsForCurrentGame, new { htmlAttributes = new { min = 0, max = 99, onchange = "updateTeamScore('Team2PlayerScores', 'Team2_GoalsForCurrentGame')" } })
+        }
+    </div>
 
+    <input type="submit" value="Save Game" />
+}
 <input type="button" value="Clear All Fields" onclick="resetTextboxes()" />

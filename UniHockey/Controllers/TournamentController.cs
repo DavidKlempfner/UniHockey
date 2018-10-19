@@ -23,9 +23,17 @@ namespace UniHockey.Controllers
 
             Team wombats = new Team { Id = 2, Name = "Wombats", Players = new List<Player> { jack, scott, travis } };
 
-            Game game = new Game { Team1 = communists, Team1Score = 4, Team2 = wombats, Team2Score = 5 };
+            //Game game = new Game { Team1 = communists, Team1Score = 4, Team2 = wombats, Team2Score = 5 };
+            Game game = new Game { Team1 = communists, Team2 = wombats };
 
-            Tournament tournament = new Tournament { Games = new List<Game> { game } };
+            Tournament tournament = new Tournament
+            {
+                Teams = new List<SelectListItem>
+                {
+                    new SelectListItem { Text = communists.Name, Value = communists.Id.ToString() },
+                    new SelectListItem { Text = wombats.Name, Value = wombats.Id.ToString() }
+                }
+            };
 
             return View(tournament);
         }

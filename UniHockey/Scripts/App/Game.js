@@ -1,10 +1,4 @@
-﻿function incrementPlayerScore(playerId) {
-    var currentPlayerScore = parseInt(document.getElementById(playerId).value);
-    currentPlayerScore++;
-    document.getElementById(playerId).value = currentPlayerScore;
-}
-
-function updateTeamScore(teamPlayerScoresDivId, teamScoreTextboxId) {
+﻿function updateTeamScore(teamPlayerScoresDivId, teamScoreTextboxId) {
     var currentScore = addPlayersScores(teamPlayerScoresDivId);
     document.getElementById(teamScoreTextboxId).value = currentScore;
 }

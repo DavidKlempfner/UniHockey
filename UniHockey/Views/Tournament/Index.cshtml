@@ -1,13 +1,10 @@
-﻿@using UniHockey.Models
-@model Tournament
+﻿@model UniHockey.Models.Tournament
 
-
-@foreach (Game item in Model.Games)
+@using (Html.BeginForm("Index", "Game"))
 {
-    @*@Html.ActionLink(item.Team1.Name + "vs" + item.Team2.Name, "Index", "Game", new { game = new { item.t } }, null)*@
-
-    @*@using (Html.BeginForm("Index", "Game"))
-    {
-        
-    }*@
+    @Html.LabelFor(m => m.Team1Id)
+    @Html.DropDownListFor(m => m.Team1Id, Model.Teams)
+    @Html.LabelFor(m => m.Team2Id)
+    @Html.DropDownListFor(m => m.Team2Id, Model.Teams)
+    <input type="submit" value="Create game" />
 }
