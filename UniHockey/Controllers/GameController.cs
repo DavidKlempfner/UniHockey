@@ -10,10 +10,10 @@ namespace UniHockey.Controllers
 {
     public class GameController : Controller
     {
-        private IBusinessService _dataService;
-        public GameController(IBusinessService dataService)
+        private IBusinessService _businessService;
+        public GameController(IBusinessService businessService)
         {
-            _dataService = dataService;
+            _businessService = businessService;
         }
         public ActionResult Index(Tournament tournament)
         {
@@ -29,6 +29,14 @@ namespace UniHockey.Controllers
 
         public ActionResult SaveGame(Game game)
         {
+            /*
+             * Save the following:
+            Player ID,
+            GoalsForCurrentGame
+            Team1Score
+            Team2Score
+             */
+            _businessService.TestMethod();
             return View();
         }
 

@@ -1,4 +1,15 @@
-﻿function updateTeamScore(teamPlayerScoresDivId, teamScoreTextboxId) {
+﻿//TODO: Get this unobtrusive JS to work:
+//window.addEventListener("DOMContentLoaded", function (event) {
+//    var team1PlayerScoresDiv = document.getElementById('Team1PlayerScores');
+//    var textboxes = team1PlayerScoresDiv.getElementsByTagName("input");
+//    for (var i = 0; i < textboxes.length; i++) {
+//        if (textboxes[i].type == "number") {
+//            textboxes[i].addEventListener("onchange", updateTeamScore('Team1PlayerScores', 'Team1_GoalsForCurrentGame'));
+//        }
+//    }
+//});
+
+function updateTeamScore(teamPlayerScoresDivId, teamScoreTextboxId) {
     var currentScore = addPlayersScores(teamPlayerScoresDivId);
     document.getElementById(teamScoreTextboxId).value = currentScore;
 }

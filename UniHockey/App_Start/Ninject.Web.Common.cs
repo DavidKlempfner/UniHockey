@@ -12,6 +12,8 @@ namespace UniHockey.App_Start
     using Ninject.Web.Common;
     using Ninject.Web.Common.WebHost;
     using Services.Abstract;
+    using DataAccess.Abstract;
+    using DataAccess;
     using Services;
 
     public static class NinjectWebCommon 
@@ -64,6 +66,7 @@ namespace UniHockey.App_Start
         private static void RegisterServices(IKernel kernel)
         {
             kernel.Bind<IBusinessService>().To<BusinessService>();
+            kernel.Bind<IDataAccess>().To<DataAccess>();
         }        
     }
 }
