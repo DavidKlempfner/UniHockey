@@ -15,10 +15,9 @@ namespace Services
         {
             _dataAccess = dataAccess;
         }
-        public int TestMethod()
+        public List<object> TestMethod()
         {
-            _dataAccess.Test();
-            return 5;
+            return _dataAccess.Test();
         }
     }
 }

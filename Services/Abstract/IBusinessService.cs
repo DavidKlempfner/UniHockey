@@ -8,6 +8,6 @@ namespace Services.Abstract
 {
     public interface IBusinessService
     {
-        int TestMethod();
+        List<object> TestMethod();
     }
 }

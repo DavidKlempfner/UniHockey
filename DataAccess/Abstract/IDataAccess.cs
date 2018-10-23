@@ -8,6 +8,6 @@ namespace DataAccess.Abstract
 {
     public interface IDataAccess
     {
-        void Test();
+        List<object> Test();
     }
 }

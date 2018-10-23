@@ -13,13 +13,14 @@ namespace DataAccess
 {
     public class DataAccess : IDataAccess
     {
-        public void Test()
+        public List<object> Test()
         {
             List<object> FriendList = new List<object>();
             using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["UniHockeyDbConnection"].ConnectionString))
             {
                 FriendList = db.Query<object>("SELECT * FROM [UniHockey].[dbo].[Player]").ToList();
             }
+            return FriendList;
         }
     }
 

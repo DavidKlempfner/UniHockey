@@ -27,7 +27,7 @@ namespace UniHockey.Controllers
             return View(game);
         }
 
-        public ActionResult SaveGame(Game game)
+        public string SaveGame(Game game)
         {
             /*
              * Save the following:
@@ -36,8 +36,9 @@ namespace UniHockey.Controllers
             Team1Score
             Team2Score
              */
-            _businessService.TestMethod();
-            return View();
+            var test =_businessService.TestMethod();
+            var x = test.First();
+            return x.ToString();
         }
 
         private List<Team> GetTeams()
