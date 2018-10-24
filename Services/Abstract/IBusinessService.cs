@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Entities.DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,8 @@ namespace Services.Abstract
 {
     public interface IBusinessService
     {
-        List<object> TestMethod();
+        List<PlayerDto> GetPlayers();
+        List<TeamDto> GetTeamsWithPlayers();
+        List<TeamDto> GetTeams();
     }
 }

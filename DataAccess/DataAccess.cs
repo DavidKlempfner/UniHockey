@@ -8,28 +8,30 @@ using Dapper;
 using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
+using Entities.DTO;
 
 namespace DataAccess
 {
     public class DataAccess : IDataAccess
     {
-        public List<object> Test()
+        public List<PlayerDto> GetPlayers()
         {
-            List<object> FriendList = new List<object>();
+            List<PlayerDto> players = new List<PlayerDto>();
             using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["UniHockeyDbConnection"].ConnectionString))
             {
-                FriendList = db.Query<object>("SELECT * FROM [UniHockey].[dbo].[Player]").ToList();
+                players = db.Query<PlayerDto>("SELECT * FROM [UniHockey].[dbo].[Player]").ToList();
             }
-            return FriendList;
+            return players;
         }
-    }
 
-    public class Player
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int TeamId { get; set; }
-        public int GoalsToDate { get; set; }
-        public int GoalsForCurrentGame { get; set; }
+        public List<TeamDto> GetTeams()
+        {
+            List<TeamDto> teams = new List<TeamDto>();
+            using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["UniHockeyDbConnection"].ConnectionString))
+            {
+                teams = db.Query<TeamDto>("SELECT * FROM [UniHockey].[dbo].[Team]").ToList();
+            }
+            return teams;
+        }
     }
 }

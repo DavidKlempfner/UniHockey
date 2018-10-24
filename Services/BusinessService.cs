@@ -1,4 +1,5 @@
 ﻿using DataAccess.Abstract;
+using Entities.DTO;
 using Services.Abstract;
 using System;
 using System.Collections.Generic;
@@ -15,9 +16,30 @@ namespace Services
         {
             _dataAccess = dataAccess;
         }
-        public List<object> TestMethod()
+
+        public List<PlayerDto> GetPlayers()
         {
-            return _dataAccess.Test();
+            List<PlayerDto> players = _dataAccess.GetPlayers();
+            return players;
+        }
+
+        public List<TeamDto> GetTeams()
+        {
+            List<TeamDto> teams = _dataAccess.GetTeams();
+            return teams;
+        }
+
+        public List<TeamDto> GetTeamsWithPlayers()
+        {
+            List<PlayerDto> playerDtos = GetPlayers();
+            List<TeamDto> teams = _dataAccess.GetTeams();
+            foreach (TeamDto team in teams)
+            {
+                var players = playerDtos.Where(x => x.TeamId == team.Id).ToList();
+                team.Players = players;
+            }
+
+            return teams;
         }
     }
 }

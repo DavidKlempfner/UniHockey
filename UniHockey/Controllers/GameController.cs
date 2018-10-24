@@ -17,7 +17,9 @@ namespace UniHockey.Controllers
         }
         public ActionResult Index(Tournament tournament)
         {
-            List<Team> teams = GetTeams();            
+            //Use AutoMapper to map this:
+            //List<Team> teams = _businessService.GetTeamsWithPlayers();
+            List<Team> teams = GetTeams();
             Game game = new Game
             {
                 Team1 = teams.Where(x => x.Id == tournament.Team1Id).FirstOrDefault(),
@@ -36,9 +38,7 @@ namespace UniHockey.Controllers
             Team1Score
             Team2Score
              */
-            var test =_businessService.TestMethod();
-            var x = test.First();
-            return x.ToString();
+            return "";
         }
 
         private List<Team> GetTeams()
