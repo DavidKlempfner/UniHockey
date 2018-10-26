@@ -1,4 +1,5 @@
 ﻿using Entities.DTO;
+using Entities.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,8 @@ namespace Services.Abstract
 {
     public interface IBusinessService
     {
-        List<PlayerDto> GetPlayers();
-        List<TeamDto> GetTeamsWithPlayers();
-        List<TeamDto> GetTeams();
+        List<Player> GetPlayers();
+        List<Team> GetTeamsWithPlayers();
+        List<Team> GetTeams();
     }
 }

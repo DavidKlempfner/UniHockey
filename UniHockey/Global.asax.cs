@@ -1,4 +1,7 @@
-﻿using System;
+﻿using AutoMapper;
+using Entities.DTO;
+using Entities.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -14,6 +17,17 @@ namespace UniHockey
             AreaRegistration.RegisterAllAreas();
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             DataAnnotationsModelValidatorProvider.AddImplicitRequiredAttributeForValueTypes = false;
+            CreateMappings();
+        }
+
+        private void CreateMappings()
+        {
+            Mapper.Initialize(cfg => {
+                cfg.CreateMap<Team, TeamDto>();
+                cfg.CreateMap<TeamDto, Team>();
+                cfg.CreateMap<Player, PlayerDto>();
+                cfg.CreateMap<PlayerDto, Player>();
+            });
         }
     }
 }

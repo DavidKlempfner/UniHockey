@@ -5,7 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace UniHockey.Models
+namespace Entities.Models
 {
     public class Tournament
     {

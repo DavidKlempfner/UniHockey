@@ -1,5 +1,7 @@
-﻿using DataAccess.Abstract;
+﻿using AutoMapper;
+using DataAccess.Abstract;
 using Entities.DTO;
+using Entities.Models;
 using Services.Abstract;
 using System;
 using System.Collections.Generic;
@@ -17,29 +19,43 @@ namespace Services
             _dataAccess = dataAccess;
         }
 
-        public List<PlayerDto> GetPlayers()
+        public List<Player> GetPlayers()
         {
-            List<PlayerDto> players = _dataAccess.GetPlayers();
+            List<Player> players = Mapper.Map<List<Player>>(GetPlayerDtos());
             return players;
-        }
+        }        
 
-        public List<TeamDto> GetTeams()
+        public List<Team> GetTeams()
         {
-            List<TeamDto> teams = _dataAccess.GetTeams();
+            List<Team> teams = Mapper.Map<List<Team>>(GetTeamDtos());
             return teams;
-        }
+        }        
 
-        public List<TeamDto> GetTeamsWithPlayers()
+        public List<Team> GetTeamsWithPlayers()
         {
-            List<PlayerDto> playerDtos = GetPlayers();
-            List<TeamDto> teams = _dataAccess.GetTeams();
-            foreach (TeamDto team in teams)
+            List<PlayerDto> playerDtos = GetPlayerDtos();
+            List<TeamDto> teamDtos = _dataAccess.GetTeamDtos();
+            foreach (TeamDto team in teamDtos)
             {
                 var players = playerDtos.Where(x => x.TeamId == team.Id).ToList();
                 team.Players = players;
             }
+            
+            List<Team> teams = Mapper.Map<List<Team>>(teamDtos);
 
             return teams;
+        }
+
+        private List<PlayerDto> GetPlayerDtos()
+        {
+            List<PlayerDto> playerDtos = _dataAccess.GetPlayerDtos();
+            return playerDtos;
+        }
+
+        private List<TeamDto> GetTeamDtos()
+        {
+            List<TeamDto> teamDtos = _dataAccess.GetTeamDtos();
+            return teamDtos;
         }
     }
 }

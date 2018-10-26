@@ -9,7 +9,7 @@ namespace DataAccess.Abstract
 {
     public interface IDataAccess
     {
-        List<PlayerDto> GetPlayers();
-        List<TeamDto> GetTeams();
+        List<PlayerDto> GetPlayerDtos();
+        List<TeamDto> GetTeamDtos();
     }
 }
