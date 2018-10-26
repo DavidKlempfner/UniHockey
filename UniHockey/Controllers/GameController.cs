@@ -30,7 +30,8 @@ namespace UniHockey.Controllers
         }
 
         public string SaveGame(Game game)
-        {
+        {            
+            _businessService.SaveGame(game);
             /*
              * Save the following:
             Player ID,

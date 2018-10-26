@@ -46,6 +46,12 @@ namespace Services
             return teams;
         }
 
+        public void SaveGame(Game game)
+        {
+            GameDto gameDto = Mapper.Map<GameDto>(game);
+            _dataAccess.SaveGame(gameDto);
+        }
+
         private List<PlayerDto> GetPlayerDtos()
         {
             List<PlayerDto> playerDtos = _dataAccess.GetPlayerDtos();

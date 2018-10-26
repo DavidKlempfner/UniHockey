@@ -34,5 +34,13 @@ namespace DataAccess
             }
             return teams;
         }
+
+        public void SaveGame(GameDto gameDto)
+        {
+            using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings[ConnectionName].ConnectionString))
+            {
+                db.Execute($"INSERT INTO [UniHockey].[dbo].[Game] ([Team1Id], [Team2Id], [Team1GoalsForCurrentGame], [Team2GoalsForCurrentGame]) VALUES ({gameDto.Team1.Id}, {gameDto.Team2.Id}, {gameDto.Team1.GoalsForCurrentGame}, {gameDto.Team2.GoalsForCurrentGame})");
+            }
+        }
     }
 }

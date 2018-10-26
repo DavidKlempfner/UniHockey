@@ -11,5 +11,6 @@ namespace DataAccess.Abstract
     {
         List<PlayerDto> GetPlayerDtos();
         List<TeamDto> GetTeamDtos();
+        void SaveGame(GameDto gameDto);
     }
 }

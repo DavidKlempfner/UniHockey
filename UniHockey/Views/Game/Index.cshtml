@@ -12,9 +12,11 @@
 {
     <div>
         @Html.DisplayFor(m => m.Team1.Name):@Html.EditorFor(m => m.Team1.GoalsForCurrentGame, new { htmlAttributes = new { @readonly = "readonly" } })
+        @Html.HiddenFor(m => m.Team1.Id)
     </div>
     <div>
         @Html.DisplayFor(m => m.Team2.Name):@Html.EditorFor(m => m.Team2.GoalsForCurrentGame, new { htmlAttributes = new { @readonly = "readonly" } })
+        @Html.HiddenFor(m => m.Team2.Id)
     </div>
 
     <div id="Team1PlayerScores">
@@ -22,6 +24,7 @@
         {
             @Html.DisplayFor(m => m.Team1.Players[i].Name)
             @Html.EditorFor(m => m.Team1.Players[i].GoalsForCurrentGame, new { htmlAttributes = new { min = 0, onchange = "updateTeamScore('Team1PlayerScores', 'Team1_GoalsForCurrentGame')" } })
+            @Html.HiddenFor(m => m.Team1.Players[i].Id)
         }
     </div>
 
@@ -30,6 +33,7 @@
         {
             @Html.DisplayFor(m => m.Team2.Players[i].Name)
             @Html.EditorFor(m => m.Team2.Players[i].GoalsForCurrentGame, new { htmlAttributes = new { min = 0, onchange = "updateTeamScore('Team2PlayerScores', 'Team2_GoalsForCurrentGame')" } })
+            @Html.HiddenFor(m => m.Team2.Players[i].Id)
         }
     </div>
 
