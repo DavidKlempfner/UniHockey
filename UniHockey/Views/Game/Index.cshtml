@@ -23,7 +23,7 @@
         @for (int i = 0; i < Model.Team1.Players.Count; i++)
         {
             @Html.DisplayFor(m => m.Team1.Players[i].Name)
-            @Html.EditorFor(m => m.Team1.Players[i].GoalsForCurrentGame, new { htmlAttributes = new { min = 0, onchange = "updateTeamScore('Team1PlayerScores', 'Team1_GoalsForCurrentGame')" } })
+            @Html.EditorFor(m => m.Team1.Players[i].GoalsForCurrentGame, new { htmlAttributes = new { min = 0 } })
             @Html.HiddenFor(m => m.Team1.Players[i].Id)
         }
     </div>
@@ -32,7 +32,7 @@
         @for (int i = 0; i < Model.Team2.Players.Count; i++)
         {
             @Html.DisplayFor(m => m.Team2.Players[i].Name)
-            @Html.EditorFor(m => m.Team2.Players[i].GoalsForCurrentGame, new { htmlAttributes = new { min = 0, onchange = "updateTeamScore('Team2PlayerScores', 'Team2_GoalsForCurrentGame')" } })
+            @Html.EditorFor(m => m.Team2.Players[i].GoalsForCurrentGame, new { htmlAttributes = new { min = 0 } })
             @Html.HiddenFor(m => m.Team2.Players[i].Id)
         }
     </div>

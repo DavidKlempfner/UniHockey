@@ -1,14 +1,20 @@
-﻿//TODO: Get this unobtrusive JS to work:
-//try window.init = function() { };
-//window.addEventListener('DOMContentLoaded', function (event) {
-//    var team1PlayerScoresDiv = document.getElementById('Team1PlayerScores');
-//    var textboxes = team1PlayerScoresDiv.getElementsByTagName('input');
-//    for (var i = 0; i < textboxes.length; i++) {
-//        if (textboxes[i].type == 'number') {
-//            textboxes[i].addEventListener('onchange', updateTeamScore('Team1PlayerScores', 'Team1_GoalsForCurrentGame'));
-//        }
-//    }
-//});
+﻿window.onload = setupEventHandlers;
+
+function setupEventHandlers() {
+    alert('window loaded')
+    setupEventHandlersForTextboxes('Team1PlayerScores', 'Team1_GoalsForCurrentGame');
+    setupEventHandlersForTextboxes('Team2PlayerScores', 'Team2_GoalsForCurrentGame');
+}
+
+function setupEventHandlersForTextboxes(teamPlayerScoresDivId, teamScoreTextboxId) {
+    var team1PlayerScoresDiv = document.getElementById(teamPlayerScoresDivId);
+    var textboxes = team1PlayerScoresDiv.getElementsByTagName('input');
+    for (var i = 0; i < textboxes.length; i++) {
+        if (textboxes[i].type == 'number') {
+            textboxes[i].setAttribute('onchange', "updateTeamScore('" + teamPlayerScoresDivId + "', '" + teamScoreTextboxId + "')");
+        }
+    }  
+}
 
 function updateTeamScore(teamPlayerScoresDivId, teamScoreTextboxId) {
     var currentScore = addPlayersScores(teamPlayerScoresDivId);
