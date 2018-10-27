@@ -1,10 +1,13 @@
 ﻿@model Entities.Models.Tournament
 
+<script src="~/Scripts/App/Tournament.js"></script>
+
 @using (Html.BeginForm("Index", "Game"))
 {
+    string defaultValue = "Please select:";
     @Html.LabelFor(m => m.Team1Id)
-    @Html.DropDownListFor(m => m.Team1Id, Model.Teams)
+    @Html.DropDownListFor(m => m.Team1Id, Model.Teams, defaultValue, new { onchange = "updateDropDown('Team1Id')" } )
     @Html.LabelFor(m => m.Team2Id)
-    @Html.DropDownListFor(m => m.Team2Id, Model.Teams)
+    @Html.DropDownListFor(m => m.Team2Id, Model.Teams, defaultValue, new { onchange = "updateDropDown('Team2Id')" })
     <input type="submit" value="Create game" />
 }

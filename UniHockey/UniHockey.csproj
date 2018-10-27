@@ -113,6 +113,7 @@
   <ItemGroup>
     <Content Include="Global.asax" />
     <Content Include="Scripts\App\Game.js" />
+    <Content Include="Scripts\App\Tournament.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
