@@ -19,11 +19,13 @@ namespace UniHockey.Controllers
         }
         public ActionResult Index(Tournament tournament)
         {
-            List<Team> teams = _businessService.GetTeamsWithPlayers();
+            Team team1 = _businessService.GetTeamWithPlayers(tournament.Team1Id);
+            Team team2 = _businessService.GetTeamWithPlayers(tournament.Team2Id);
+
             Game game = new Game
             {
-                Team1 = teams.Where(x => x.Id == tournament.Team1Id).FirstOrDefault(),
-                Team2 = teams.Where(x => x.Id == tournament.Team2Id).FirstOrDefault()
+                Team1 = team1,
+                Team2 = team2
             };
 
             return View(game);

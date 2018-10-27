@@ -19,22 +19,31 @@ namespace Services
             _dataAccess = dataAccess;
         }
 
-        public List<Player> GetPlayers()
+        public List<Player> GetAllPlayers()
         {
-            List<Player> players = Mapper.Map<List<Player>>(GetPlayerDtos());
+            List<PlayerDto> playerDtos = _dataAccess.GetAllPlayerDtos();
+            List<Player> players = Mapper.Map<List<Player>>(playerDtos);
             return players;
-        }        
+        }
 
-        public List<Team> GetTeams()
+        public List<Player> GetPlayers(int teamId)
         {
-            List<Team> teams = Mapper.Map<List<Team>>(GetTeamDtos());
+            List<PlayerDto> playerDtos = _dataAccess.GetPlayerDtos(teamId);
+            List<Player> players = Mapper.Map<List<Player>>(playerDtos);
+            return players;
+        }
+
+        public List<Team> GetAllTeams()
+        {
+            List<TeamDto> teamDtos = _dataAccess.GetAllTeamDtos();
+            List<Team> teams = Mapper.Map<List<Team>>(teamDtos);
             return teams;
         }        
 
-        public List<Team> GetTeamsWithPlayers()
+        public List<Team> GetAllTeamsWithPlayers()
         {
-            List<PlayerDto> playerDtos = GetPlayerDtos();
-            List<TeamDto> teamDtos = _dataAccess.GetTeamDtos();
+            List<PlayerDto> playerDtos = _dataAccess.GetAllPlayerDtos();
+            List<TeamDto> teamDtos = _dataAccess.GetAllTeamDtos();
             foreach (TeamDto team in teamDtos)
             {
                 var players = playerDtos.Where(x => x.TeamId == team.Id).ToList();
@@ -46,22 +55,21 @@ namespace Services
             return teams;
         }
 
+        public Team GetTeamWithPlayers(int teamId)
+        {
+            List<PlayerDto> playerDtos = _dataAccess.GetPlayerDtos(teamId);
+            TeamDto teamDto = _dataAccess.GetTeamDto(teamId);
+            teamDto.Players = playerDtos;
+
+            Team team = Mapper.Map<Team>(teamDto);
+
+            return team;
+        }
+
         public void SaveGame(Game game)
         {
             GameDto gameDto = Mapper.Map<GameDto>(game);
             _dataAccess.SaveGame(gameDto);
-        }
-
-        private List<PlayerDto> GetPlayerDtos()
-        {
-            List<PlayerDto> playerDtos = _dataAccess.GetPlayerDtos();
-            return playerDtos;
-        }
-
-        private List<TeamDto> GetTeamDtos()
-        {
-            List<TeamDto> teamDtos = _dataAccess.GetTeamDtos();
-            return teamDtos;
-        }
+        }       
     }
 }

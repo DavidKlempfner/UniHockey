@@ -9,8 +9,10 @@ namespace DataAccess.Abstract
 {
     public interface IDataAccess
     {
-        List<PlayerDto> GetPlayerDtos();
-        List<TeamDto> GetTeamDtos();
+        List<PlayerDto> GetAllPlayerDtos();
+        List<PlayerDto> GetPlayerDtos(int teamId);
+        List<TeamDto> GetAllTeamDtos();
+        TeamDto GetTeamDto(int id);
         void SaveGame(GameDto gameDto);
     }
 }

@@ -15,7 +15,7 @@ namespace DataAccess
     public class DataAccess : IDataAccess
     {
         private const string ConnectionName = "UniHockeyDbConnection";
-        public List<PlayerDto> GetPlayerDtos()
+        public List<PlayerDto> GetAllPlayerDtos()
         {
             List<PlayerDto> players = new List<PlayerDto>();
             using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings[ConnectionName].ConnectionString))
@@ -25,7 +25,17 @@ namespace DataAccess
             return players;
         }
 
-        public List<TeamDto> GetTeamDtos()
+        public List<PlayerDto> GetPlayerDtos(int teamId)
+        {
+            List<PlayerDto> players = new List<PlayerDto>();
+            using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings[ConnectionName].ConnectionString))
+            {
+                players = db.Query<PlayerDto>($"SELECT * FROM [UniHockey].[dbo].[Player] WHERE TeamId = {teamId}").ToList();
+            }
+            return players;
+        }
+
+        public List<TeamDto> GetAllTeamDtos()
         {
             List<TeamDto> teams = new List<TeamDto>();
             using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings[ConnectionName].ConnectionString))
@@ -33,6 +43,16 @@ namespace DataAccess
                 teams = db.Query<TeamDto>("SELECT * FROM [UniHockey].[dbo].[Team]").ToList();
             }
             return teams;
+        }
+
+        public TeamDto GetTeamDto(int id)
+        {
+            TeamDto team = new TeamDto();
+            using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings[ConnectionName].ConnectionString))
+            {
+                team = db.Query<TeamDto>($"SELECT * FROM [UniHockey].[dbo].[Team] WHERE Id = {id}").FirstOrDefault();
+            }
+            return team;
         }
 
         public void SaveGame(GameDto gameDto)

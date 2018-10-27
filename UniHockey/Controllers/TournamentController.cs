@@ -23,7 +23,7 @@ namespace UniHockey.Controllers
 
         private Tournament CreateTournament()
         {
-            List<Team> teams = _businessService.GetTeams();
+            List<Team> teams = _businessService.GetAllTeams();
             Tournament tournament = new Tournament();
             List<SelectListItem> selectListItems = new List<SelectListItem>();
             foreach (Team team in teams)

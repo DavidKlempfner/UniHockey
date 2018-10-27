@@ -10,9 +10,11 @@ namespace Services.Abstract
 {
     public interface IBusinessService
     {
-        List<Player> GetPlayers();
-        List<Team> GetTeamsWithPlayers();
-        List<Team> GetTeams();
+        List<Player> GetAllPlayers();
+        List<Player> GetPlayers(int teamId);        
+        List<Team> GetAllTeams();
+        List<Team> GetAllTeamsWithPlayers();
+        Team GetTeamWithPlayers(int teamId);
         void SaveGame(Game gameDto);
     }
 }
