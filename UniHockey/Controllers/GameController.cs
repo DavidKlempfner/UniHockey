@@ -31,17 +31,9 @@ namespace UniHockey.Controllers
             return View(game);
         }
 
-        public string SaveGame(Game game)
+        public void SaveGame(Game game)
         {            
-            _businessService.SaveGame(game);
-            /*
-             * Save the following:
-            Player ID,
-            GoalsForCurrentGame
-            Team1Score
-            Team2Score
-             */
-            return "";
+            _businessService.SaveGame(game);            
         }
     }
 }
