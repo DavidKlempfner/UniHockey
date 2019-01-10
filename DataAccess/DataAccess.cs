@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dapper;
-using Dapper.Contrib;
 using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
@@ -52,7 +51,7 @@ namespace DataAccess
         {
             using (IDbConnection db = new SqlConnection(ConnectionString))
             {
-                db.Execute("INSERT INTO Game ([Team1Id], [Team2Id], [Team1GoalsForCurrentGame], [Team2GoalsForCurrentGame]) VALUES (@Team1Id, @Team2Id, @Team1Goals, @Team2Goals)", new { Team1Id = gameDto.Team1.Id, Team2Id = gameDto.Team2.Id, gameDto.Team1Goals, gameDto.Team2Goals });
+                db.Execute("INSERT INTO Game ([Team1Id], [Team2Id], [Team1Goals], [Team2Goals]) VALUES (@Team1Id, @Team2Id, @Team1Goals, @Team2Goals)", new { Team1Id = gameDto.Team1.Id, Team2Id = gameDto.Team2.Id, gameDto.Team1Goals, gameDto.Team2Goals });
                 /*
              * Save the following:
             Player ID,
