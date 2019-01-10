@@ -3,6 +3,9 @@
 function setupEventHandlers() {
     setupEventHandlersForTextboxes('Team1PlayerScores', 'Team1_GoalsForCurrentGame');
     setupEventHandlersForTextboxes('Team2PlayerScores', 'Team2_GoalsForCurrentGame');
+
+    var clearAllFieldsButton = document.getElementById('ClearAllFields');
+    clearAllFieldsButton.setAttribute('onclick', "resetTextboxes()");
 }
 
 function setupEventHandlersForTextboxes(teamPlayerScoresDivId, teamScoreTextboxId) {

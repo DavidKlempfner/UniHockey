@@ -14,11 +14,11 @@ namespace DataAccess
 {
     public class DataAccess : IDataAccess
     {
-        private const string ConnectionName = "UniHockeyDbConnection";
+        private readonly string ConnectionString = ConfigurationManager.ConnectionStrings["UniHockeyDbConnection"].ConnectionString;
         public List<PlayerDto> GetAllPlayerDtos()
         {
             List<PlayerDto> players = new List<PlayerDto>();
-            using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings[ConnectionName].ConnectionString))
+            using (IDbConnection db = new SqlConnection(ConnectionString))
             {
                 players = db.Query<PlayerDto>("SELECT * FROM [UniHockey].[dbo].[Player]").ToList();
             }
@@ -28,7 +28,7 @@ namespace DataAccess
         public List<PlayerDto> GetPlayerDtos(int teamId)
         {
             List<PlayerDto> players = new List<PlayerDto>();
-            using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings[ConnectionName].ConnectionString))
+            using (IDbConnection db = new SqlConnection(ConnectionString))
             {
                 players = db.Query<PlayerDto>($"SELECT * FROM [UniHockey].[dbo].[Player] WHERE TeamId = {teamId}").ToList();
             }
@@ -38,7 +38,7 @@ namespace DataAccess
         public List<TeamDto> GetAllTeamDtos()
         {
             List<TeamDto> teams = new List<TeamDto>();
-            using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings[ConnectionName].ConnectionString))
+            using (IDbConnection db = new SqlConnection(ConnectionString))
             {
                 teams = db.Query<TeamDto>("SELECT * FROM [UniHockey].[dbo].[Team]").ToList();
             }
@@ -48,7 +48,7 @@ namespace DataAccess
         public TeamDto GetTeamDto(int id)
         {
             TeamDto team = new TeamDto();
-            using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings[ConnectionName].ConnectionString))
+            using (IDbConnection db = new SqlConnection(ConnectionString))
             {
                 team = db.Query<TeamDto>($"SELECT * FROM [UniHockey].[dbo].[Team] WHERE Id = {id}").FirstOrDefault();
             }
@@ -57,7 +57,7 @@ namespace DataAccess
 
         public void SaveGame(GameDto gameDto)
         {
-            using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings[ConnectionName].ConnectionString))
+            using (IDbConnection db = new SqlConnection(ConnectionString))
             {
                 db.Execute($"INSERT INTO [UniHockey].[dbo].[Game] ([Team1Id], [Team2Id], [Team1GoalsForCurrentGame], [Team2GoalsForCurrentGame]) VALUES ({gameDto.Team1.Id}, {gameDto.Team2.Id}, {gameDto.Team1.GoalsForCurrentGame}, {gameDto.Team2.GoalsForCurrentGame})");
             }
