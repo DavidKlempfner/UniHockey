@@ -11,6 +11,5 @@ namespace Entities.DTO
         public string Name { get; set; }
         public List<PlayerDto> Players { get; set; }        
         public int GoalsToDate { get; set; }
-        public int GoalsForCurrentGame { get; set; }
     }
 }

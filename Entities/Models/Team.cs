@@ -11,6 +11,5 @@ namespace Entities.Models
         public string Name { get; set; }
         public List<Player> Players { get; set; }        
         public int GoalsToDate { get; set; }
-        public int GoalsForCurrentGame { get; set; }
     }
 }

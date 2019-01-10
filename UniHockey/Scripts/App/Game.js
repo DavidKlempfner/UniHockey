@@ -1,8 +1,8 @@
 ﻿window.onload = setupEventHandlers;
 
 function setupEventHandlers() {
-    setupEventHandlersForTextboxes('Team1PlayerScores', 'Team1_GoalsForCurrentGame');
-    setupEventHandlersForTextboxes('Team2PlayerScores', 'Team2_GoalsForCurrentGame');
+    setupEventHandlersForTextboxes('Team1PlayerScores', 'Team1Goals');
+    setupEventHandlersForTextboxes('Team2PlayerScores', 'Team2Goals');
 
     var clearAllFieldsButton = document.getElementById('ClearAllFields');
     clearAllFieldsButton.setAttribute('onclick', "resetTextboxes()");

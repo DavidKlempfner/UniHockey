@@ -11,11 +11,11 @@
 @using (Html.BeginForm("SaveGame", "Game"))
 {
     <div>
-        @Html.DisplayFor(m => m.Team1.Name):@Html.EditorFor(m => m.Team1.GoalsForCurrentGame, new { htmlAttributes = new { @readonly = "readonly" } })
+        @Html.DisplayFor(m => m.Team1.Name):@Html.EditorFor(m => m.Team1Goals, new { htmlAttributes = new { @readonly = "readonly" } })
         @Html.HiddenFor(m => m.Team1.Id)
     </div>
     <div>
-        @Html.DisplayFor(m => m.Team2.Name):@Html.EditorFor(m => m.Team2.GoalsForCurrentGame, new { htmlAttributes = new { @readonly = "readonly" } })
+        @Html.DisplayFor(m => m.Team2.Name):@Html.EditorFor(m => m.Team2Goals, new { htmlAttributes = new { @readonly = "readonly" } })
         @Html.HiddenFor(m => m.Team2.Id)
     </div>
 

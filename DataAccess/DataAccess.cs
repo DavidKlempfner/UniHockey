@@ -52,7 +52,7 @@ namespace DataAccess
         {
             using (IDbConnection db = new SqlConnection(ConnectionString))
             {
-                db.Execute("INSERT INTO Game ([Team1Id], [Team2Id], [Team1GoalsForCurrentGame], [Team2GoalsForCurrentGame]) VALUES (@Team1Id, @Team2Id, @Team1GoalsForCurrentGame, @Team2GoalsForCurrentGame)", new { Team1Id = gameDto.Team1.Id, Team2Id = gameDto.Team2.Id, Team1GoalsForCurrentGame = gameDto.Team1.GoalsForCurrentGame, Team2GoalsForCurrentGame = gameDto.Team2.GoalsForCurrentGame });
+                db.Execute("INSERT INTO Game ([Team1Id], [Team2Id], [Team1GoalsForCurrentGame], [Team2GoalsForCurrentGame]) VALUES (@Team1Id, @Team2Id, @Team1Goals, @Team2Goals)", new { Team1Id = gameDto.Team1.Id, Team2Id = gameDto.Team2.Id, gameDto.Team1Goals, gameDto.Team2Goals });
                 /*
              * Save the following:
             Player ID,
