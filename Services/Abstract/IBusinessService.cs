@@ -15,6 +15,6 @@ namespace Services.Abstract
         List<Team> GetAllTeams();
         List<Team> GetAllTeamsWithPlayers();
         Team GetTeamWithPlayers(int teamId);
-        void SaveGame(Game gameDto);
+        void Save(Game game);
     }
 }

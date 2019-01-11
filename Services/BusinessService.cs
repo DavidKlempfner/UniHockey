@@ -66,10 +66,12 @@ namespace Services
             return team;
         }
 
-        public void SaveGame(Game game)
+        public void Save(Game game)
         {
             GameDto gameDto = Mapper.Map<GameDto>(game);
             int gameId = _dataAccess.SaveGame(gameDto.Team1.Id, gameDto.Team2.Id);
-        }       
+            _dataAccess.SavePlayersGoals(gameId, gameDto.Team1.Players.Where(x => x.NumOfGoals > 0));
+            _dataAccess.SavePlayersGoals(gameId, gameDto.Team2.Players.Where(x => x.NumOfGoals > 0));
+        }
     }
 }

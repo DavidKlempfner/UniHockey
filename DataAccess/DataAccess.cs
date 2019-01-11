@@ -57,5 +57,16 @@ namespace DataAccess
                 return gameId;
             }
         }
+
+        public void SavePlayersGoals(int gameId, IEnumerable<PlayerDto> playerDtos)
+        {
+            using (IDbConnection db = new SqlConnection(ConnectionString))
+            {
+                foreach (PlayerDto playerDto in playerDtos)
+                {
+                    db.Execute("INSERT INTO Goal (GameId, PlayerId, NumOfGoals) VALUES (@GameId, @PlayerId, @NumOfGoals)", new { gameId, PlayerId = playerDto.Id, playerDto.NumOfGoals });
+                }
+            }
+        }
     }
 }

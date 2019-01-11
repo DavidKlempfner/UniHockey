@@ -14,5 +14,6 @@ namespace DataAccess.Abstract
         List<TeamDto> GetAllTeamDtos();
         TeamDto GetTeamDto(int id);
         int SaveGame(int team1Id, int team2Id);
+        void SavePlayersGoals(int gameId, IEnumerable<PlayerDto> playerDtos);
     }
 }

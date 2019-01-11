@@ -33,7 +33,7 @@ namespace UniHockey.Controllers
 
         public void SaveGame(Game game)
         {            
-            _businessService.SaveGame(game);            
+            _businessService.Save(game);            
         }
     }
 }
