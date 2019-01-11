@@ -10,7 +10,6 @@ namespace Entities.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public int TeamId { get; set; }
-        public int GoalsToDate { get; set; }
         public int GoalsForCurrentGame { get; set; }
     }
 }

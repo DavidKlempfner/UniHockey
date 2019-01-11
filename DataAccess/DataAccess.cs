@@ -47,18 +47,14 @@ namespace DataAccess
             }
         }
 
-        public void SaveGame(GameDto gameDto)
+        public int SaveGame(int team1Id, int team2Id)
         {
             using (IDbConnection db = new SqlConnection(ConnectionString))
             {
-                db.Execute("INSERT INTO Game ([Team1Id], [Team2Id], [Team1Goals], [Team2Goals]) VALUES (@Team1Id, @Team2Id, @Team1Goals, @Team2Goals)", new { Team1Id = gameDto.Team1.Id, Team2Id = gameDto.Team2.Id, gameDto.Team1Goals, gameDto.Team2Goals });
-                /*
-             * Save the following:
-            Player ID,
-            GoalsForCurrentGame
-            Team1Score
-            Team2Score
-             */
+                string sql = @"INSERT INTO Game (Team1Id, Team2Id) VALUES (@Team1Id, @Team2Id);
+                               SELECT CAST(SCOPE_IDENTITY() as int)";
+                int gameId = db.Query<int>(sql, new { team1Id, team2Id }).Single();
+                return gameId;
             }
         }
     }

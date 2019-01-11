@@ -13,6 +13,6 @@ namespace DataAccess.Abstract
         List<PlayerDto> GetPlayerDtos(int teamId);
         List<TeamDto> GetAllTeamDtos();
         TeamDto GetTeamDto(int id);
-        void SaveGame(GameDto gameDto);
+        int SaveGame(int team1Id, int team2Id);
     }
 }

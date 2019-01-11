@@ -69,7 +69,7 @@ namespace Services
         public void SaveGame(Game game)
         {
             GameDto gameDto = Mapper.Map<GameDto>(game);
-            _dataAccess.SaveGame(gameDto);
+            int gameId = _dataAccess.SaveGame(gameDto.Team1.Id, gameDto.Team2.Id);
         }       
     }
 }
