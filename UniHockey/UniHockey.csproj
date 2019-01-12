@@ -112,6 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
+    <Content Include="Images\Auhl.jpg" />
     <Content Include="Scripts\App\Game.js" />
     <Content Include="Scripts\App\Tournament.js" />
     <Content Include="Web.config" />
