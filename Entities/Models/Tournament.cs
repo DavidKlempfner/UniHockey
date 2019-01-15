@@ -11,9 +11,17 @@ namespace Entities.Models
     {
         public IEnumerable<SelectListItem> Teams { get; set; }
 
+        public List<TeamWithPointsBroughtForward> SelectedTeams { get; set; }
+
         [DisplayName("Team1")]
         public int Team1Id { get; set; }
         [DisplayName("Team2")]
         public int Team2Id { get; set; }
+    }
+
+    public class TeamWithPointsBroughtForward
+    {
+        public string Team { get; set; }
+        public int Points { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DataAccess;
 using DataAccess.Abstract;
 using Entities.DTO;
 using Entities.Models;
@@ -34,7 +35,7 @@ namespace Services
         }
 
         public List<Team> GetAllTeams()
-        {
+        {            
             List<TeamDto> teamDtos = _dataAccess.GetAllTeamDtos();
             List<Team> teams = Mapper.Map<List<Team>>(teamDtos);
             return teams;
@@ -69,9 +70,16 @@ namespace Services
         public void Save(Game game)
         {
             GameDto gameDto = Mapper.Map<GameDto>(game);
+            //use transaction
             int gameId = _dataAccess.SaveGame(gameDto.Team1.Id, gameDto.Team2.Id);
             _dataAccess.SavePlayersGoals(gameId, gameDto.Team1.Players.Where(x => x.NumOfGoals > 0));
             _dataAccess.SavePlayersGoals(gameId, gameDto.Team2.Players.Where(x => x.NumOfGoals > 0));
+        }
+
+        public IEnumerable<Tuple<string, int>> GetTeamsWithPointsBroughtToNextTournament()
+        {
+            IEnumerable<Tuple<string, int>> teamsWithPointsBroughtToNextTournament = Scraper.GetTeamsWithPointsBroughtToNextTournament();
+            return teamsWithPointsBroughtToNextTournament;
         }
     }
 }

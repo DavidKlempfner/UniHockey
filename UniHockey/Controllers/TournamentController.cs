@@ -16,13 +16,13 @@ namespace UniHockey.Controllers
             _businessService = businessService;
         }
         public ActionResult Index()
-        {
+        {            
             Tournament tournament = CreateTournament();
             return View(tournament);
         }
 
         private Tournament CreateTournament()
-        {
+        {            
             List<Team> teams = _businessService.GetAllTeams();
             Tournament tournament = new Tournament();
             List<SelectListItem> selectListItems = new List<SelectListItem>();
