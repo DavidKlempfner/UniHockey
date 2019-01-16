@@ -21,7 +21,7 @@ namespace Entities.Models
 
     public class TeamWithPointsBroughtForward
     {
-        public string Team { get; set; }
-        public int Points { get; set; }
+        public int? TeamId { get; set; }
+        public int? PointsBrought { get; set; }
     }
 }

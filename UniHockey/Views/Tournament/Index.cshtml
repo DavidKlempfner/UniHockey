@@ -4,28 +4,27 @@
 
 @using (Html.BeginForm("Index", "Game"))
 {
-    string defaultValue = "Please select:";
     @Html.LabelFor(m => m.Team1Id)
-    @Html.DropDownListFor(m => m.Team1Id, Model.Teams, defaultValue)
-    @Html.LabelFor(m => m.Team2Id)
-    @Html.DropDownListFor(m => m.Team2Id, Model.Teams, defaultValue)
+        @Html.DropDownListFor(m => m.Team1Id, Model.Teams, "Please select:")
+        @Html.LabelFor(m => m.Team2Id)
+        @Html.DropDownListFor(m => m.Team2Id, Model.Teams, "Please select:")
 
-    <table id="TeamDropDowns">
+    <table>
         <tr>
-            <td>@Html.Label("Team")</td>
-            <td>@Html.Label("Points Brought To Tournament")</td>
+            <td><label>Team</label></td>
+            <td><label>Points Brought To Tournament</label></td>
         </tr>
         @{
             const int maxNumOfTeams = 8;
             for (int i = 0; i < maxNumOfTeams; i++)
             {
-                <tr>
-                    <td>@Html.DropDownList("SelectedTeams[" + i + "].Team", Model.Teams, defaultValue)</td>
-                    <td>@Html.TextBox("SelectedTeams[" + i + "].Points", "", new { type = "number" })</td>
-                </tr>
+        <tr>
+            <td>@Html.DropDownList("SelectedTeams[" + i + "].TeamId", Model.Teams, "Please select:")</td>
+            <td>@Html.TextBox("SelectedTeams[" + i + "].PointsBrought", "", new { type = "number" })</td>
+        </tr>
             }
-        }
+            }
     </table>
 
-    <input id="Submit" type="submit" value="Create game" disabled="disabled" />
+    <input id="Submit" type="submit" value="Create game" />
 }

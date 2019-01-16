@@ -1,13 +1,16 @@
 ﻿var defaultValue = '';
 
-window.onload = setupEventHandlers;
+window.onload = setup;
 
-function setupEventHandlers() {
+function setup() {
     var team1DropDown = document.getElementById('Team1Id');
     team1DropDown.setAttribute('onchange', "updateDropDown('Team1Id')");
 
     var team2DropDown = document.getElementById('Team2Id');
     team2DropDown.setAttribute('onchange', "updateDropDown('Team2Id')");
+
+    var submitButton = document.getElementById('Submit');
+    submitButton.setAttribute('disabled', 'disabled');
 }
 
 function updateDropDown(teamId) {    

@@ -17,6 +17,8 @@ namespace UniHockey.Controllers
         {
             _businessService = businessService;
         }
+
+        [HttpPost]
         public ActionResult Index(Tournament tournament)
         {
             Team team1 = _businessService.GetTeamWithPlayers(tournament.Team1Id);
