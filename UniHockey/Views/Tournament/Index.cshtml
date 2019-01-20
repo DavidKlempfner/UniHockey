@@ -1,29 +1,29 @@
-﻿@model Entities.Models.Tournament
+﻿@using Entities.ViewModels
+@model TournamentViewModel
 
 <script src="~/Scripts/App/Tournament.js"></script>
 
 @using (Html.BeginForm("Index", "Game"))
 {
     @Html.LabelFor(m => m.Team1Id)
-        @Html.DropDownListFor(m => m.Team1Id, Model.Teams, "Please select:")
-        @Html.LabelFor(m => m.Team2Id)
-        @Html.DropDownListFor(m => m.Team2Id, Model.Teams, "Please select:")
+    @Html.DropDownListFor(m => m.Team1Id, Model.Teams, "Please select:")
+    @Html.LabelFor(m => m.Team2Id)
+    @Html.DropDownListFor(m => m.Team2Id, Model.Teams, "Please select:")
 
-    <table>
+    <table id="teamsWithPointsTable">
         <tr>
             <td><label>Team</label></td>
             <td><label>Points Brought To Tournament</label></td>
         </tr>
         @{
-            const int maxNumOfTeams = 8;
-            for (int i = 0; i < maxNumOfTeams; i++)
+            for (int i = 0; i < TournamentViewModel.MaxNumOfTeams; i++)
             {
-        <tr>
-            <td>@Html.DropDownList("SelectedTeams[" + i + "].TeamId", Model.Teams, "Please select:")</td>
-            <td>@Html.TextBox("SelectedTeams[" + i + "].PointsBrought", "", new { type = "number" })</td>
-        </tr>
+                <tr>
+                    <td>@Html.DropDownList("SelectedTeams[" + i + "].TeamId", Model.Teams, "Please select:")</td>
+                    <td>@Html.TextBox("SelectedTeams[" + i + "].PointsBrought", "", new { type = "number" })</td>
+                </tr>
             }
-            }
+        }
     </table>
 
     <input id="Submit" type="submit" value="Create game" />

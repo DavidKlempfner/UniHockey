@@ -1,4 +1,5 @@
 ﻿using Entities.Models;
+using Entities.ViewModels;
 using Services.Abstract;
 using System;
 using System.Collections.Generic;
@@ -16,15 +17,15 @@ namespace UniHockey.Controllers
             _businessService = businessService;
         }
         public ActionResult Index()
-        {            
-            Tournament tournament = CreateTournament();
+        {
+            TournamentViewModel tournament = CreateTournamentViewModel();
             return View(tournament);
         }
 
-        private Tournament CreateTournament()
+        private TournamentViewModel CreateTournamentViewModel()
         {            
             List<Team> teams = _businessService.GetAllTeams();
-            Tournament tournament = new Tournament();
+            TournamentViewModel tournament = new TournamentViewModel();
             List<SelectListItem> selectListItems = new List<SelectListItem>();
             foreach (Team team in teams)
             {
@@ -32,6 +33,13 @@ namespace UniHockey.Controllers
             }
             tournament.Teams = selectListItems;
             return tournament;
+        }
+
+        [HttpGet]
+        public JsonResult GetPointsBrought()
+        {
+            var result = _businessService.GetTeamsWithPointsBroughtToNextTournament();
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
     }
 }

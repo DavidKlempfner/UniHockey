@@ -16,5 +16,7 @@ namespace Services.Abstract
         List<Team> GetAllTeamsWithPlayers();
         Team GetTeamWithPlayers(int teamId);
         void Save(Game game);
+
+        IEnumerable<Tuple<string, int>> GetTeamsWithPointsBroughtToNextTournament();
     }
 }
