@@ -1,0 +1,160 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  Deploys a minimal ECS Fargate Service configured to use an ECR image,
+  referencing one secret from Secrets Manager and one environment variable from a CFN parameter.
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: Dev
+    Description: Environment name for resource tagging.
+  ImageRepoName:
+    Type: String
+    Default: my-app-repository
+    Description: Name of the ECR repository containing the image.
+  ImageTag:
+    Type: String
+    Default: latest
+    Description: Docker image tag to deploy. This will be updated by CI/CD.
+  SecretArn:
+    Type: String
+    Description: ARN of the AWS Secrets Manager secret for UniHockeySettings__David.
+    ConstraintDescription: Must be a valid Secrets Manager ARN.
+    
+  # --- NEW PARAMETER for simple environment variable ---
+  CassieEnvVarValue:
+    Type: String
+    Description: The plain string value for the UniHockeySettings__Cassie environment variable.
+    
+  # --- PARAMETERS FOR NETWORKING ---
+  AppSubnets:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: Comma-separated list of Subnet IDs where the ECS tasks will be launched (e.g., subnet-xxxx,subnet-yyyy).
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: The VPC ID where the subnets are located, required for the Security Group.
+
+Resources:
+  # --- 1. ECS Cluster ---
+  ECSCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: !Sub "${EnvironmentName}-WebAppCluster"
+      
+  # --- 2. Security Group (New Resource) ---
+  WebAppSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub "${EnvironmentName}-WebApp-SG"
+      GroupDescription: Enable HTTP access on port 80 and all egress
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0 # Allows HTTP access from the internet
+      SecurityGroupEgress:
+        - IpProtocol: -1 # Allows all outbound traffic
+          CidrIp: 0.0.0.0/0
+
+  # --- 3. IAM Roles (CRITICAL for Secrets access) ---
+  
+  # 3A. Task Execution Role: Used by the ECS agent to pull images, send logs, and fetch secrets.
+  ECSTaskExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${EnvironmentName}-ECS-TaskExecutionRole"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: [ecs-tasks.amazonaws.com]
+            Action: ["sts:AssumeRole"]
+      ManagedPolicyArns:
+        # Standard policy required for ECR access and CloudWatch logs
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      Policies:
+        # Custom policy to allow access ONLY to Secrets Manager
+        - PolicyName: SecretAccessPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "secretsmanager:GetSecretValue"
+                Resource: !Ref SecretArn # Allows reading the specific secret value
+  
+  # --- 4. Task Definition ---
+  ECSTaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Sub "${EnvironmentName}-WebAppTaskDef"
+      RequiresCompatibilities:
+        - FARGATE
+      NetworkMode: awsvpc
+      Cpu: "256"
+      Memory: "512"
+      ExecutionRoleArn: !Ref ECSTaskExecutionRole
+      # TaskRoleArn has been removed as it is not needed for this application.
+      ContainerDefinitions:
+        - Name: web-app-container
+          Image: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ImageRepoName}:${ImageTag}"
+          PortMappings:
+            # Set to 8080, which is the standard non-privileged port for application containers
+            - ContainerPort: 8080
+              Protocol: tcp
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref CloudWatchLogGroup
+              awslogs-region: !Ref "AWS::Region"
+              awslogs-stream-prefix: ecs
+              
+              
+          # Passes simple environment variable from a CFN parameter
+          Environment:
+            - Name: UniHockeySettings__Cassie
+              Value: !Ref CassieEnvVarValue
+              
+          # References Secrets Manager value for UniHockeySettings__David
+          Secrets: 
+            - Name: UniHockeySettings__David
+              ValueFrom: !Ref SecretArn
+              
+  # --- 5. ECS Service ---
+  ECSService:
+    Type: AWS::ECS::Service
+    DependsOn: CloudWatchLogGroup
+    Properties:
+      Cluster: !Ref ECSCluster
+      ServiceName: !Sub "${EnvironmentName}-WebAppService"
+      TaskDefinition: !Ref ECSTaskDefinition
+      DesiredCount: 1
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          # --- References the network parameters ---
+          Subnets: !Ref AppSubnets 
+          # Now uses the Security Group defined in this template
+          SecurityGroups: 
+            - !GetAtt WebAppSecurityGroup.GroupId
+  
+  # --- 6. CloudWatch Log Group ---
+  CloudWatchLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/ecs/${EnvironmentName}-WebApp"
+      RetentionInDays: 7
+      
+Outputs:
+  ClusterName:
+    Description: "The name of the ECS Cluster"
+    Value: !Ref ECSCluster
+  ServiceName:
+    Description: "The name of the ECS Service"
+    Value: !GetAtt ECSService.Name
+  ServiceSecurityGroup:
+    Description: "The Security Group ID created for the Web App"
+    Value: !GetAtt WebAppSecurityGroup.GroupId
