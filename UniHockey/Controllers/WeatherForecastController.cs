@@ -19,7 +19,11 @@ namespace UniHockey.Controllers
         [HttpGet(Name = "GetWeatherForecast")]
         public string Get()
         {
-            return "Hi! - " + _david + ", " + _cassie;
+            var containerHostname = Environment.MachineName;
+            var processId = Environment.ProcessId;
+            var osDescription = System.Runtime.InteropServices.RuntimeInformation.OSDescription;
+
+            return $"Hi! - {_david}, {_cassie} - {containerHostname}, {processId}, {osDescription}";
         }
     }
 }
