@@ -27,22 +27,22 @@ namespace UniHockey.Controllers
 
             // make a GET request to https://jsonplaceholder.typicode.com/posts/1
             string externalData = "";
-            //try
-            //{
-            //    var response = await _httpClient.GetAsync("https://jsonplaceholder.typicode.com/posts/1");
-            //    if (response.IsSuccessStatusCode)
-            //    {
-            //        externalData = await response.Content.ReadAsStringAsync();
-            //    }
-            //    else
-            //    {
-            //        externalData = $"Error: {response.StatusCode}";
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    externalData = $"Exception: {ex.Message}";
-            //}
+            try
+            {
+                var response = await _httpClient.GetAsync("https://jsonplaceholder.typicode.com/posts/1");
+                if (response.IsSuccessStatusCode)
+                {
+                    externalData = await response.Content.ReadAsStringAsync();
+                }
+                else
+                {
+                    externalData = $"Error: {response.StatusCode}";
+                }
+            }
+            catch (Exception ex)
+            {
+                externalData = $"Exception: {ex.Message}";
+            }
 
             return $"Hi! - {_david}, {_cassie} - {containerHostname}, {processId}, {osDescription}\n\nExternal API Response:\n{externalData}";
         }
