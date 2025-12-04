@@ -9,6 +9,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.Configure<UniHockeySettings>(builder.Configuration.GetSection("UniHockeySettings"));
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 
