@@ -40,8 +40,8 @@ WORKDIR /app
 COPY --from=build /app .
 
 # 3. Listen on the standard ASP.NET Core port (8080)
-ENV ASPNETCORE_URLS=http://+:8080
-EXPOSE 8080
+ENV ASPNETCORE_URLS=http://+:80
+EXPOSE 80
 
 # 4. Define the application entry point
 # NOTE: Removed incorrect escaped characters from the ENTRYPOINT
