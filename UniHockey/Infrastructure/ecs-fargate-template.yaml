@@ -1,160 +1,216 @@
-AWSTemplateFormatVersion: "2010-09-09"
-Description: >
-  Deploys a minimal ECS Fargate Service accessible directly via a public IP
-  on container port 8080 (no ALB). Tasks are deployed with AssignPublicIp: ENABLED.
+AWSTemplateFormatVersion: '2010-09-09'
+Description: VPC with Public and Private Subnets + NAT Gateway with environment prefix
 
 Parameters:
-  EnvironmentName:
+  EnvName:
     Type: String
     Default: Dev
-    Description: Environment name for resource tagging.
-  ImageRepoName:
+    Description: Environment name to prefix all resources
+
+  VpcCidr:
     Type: String
-    Default: my-app-repository
-    Description: Name of the ECR repository containing the image.
-  ImageTag:
+    Default: 10.0.0.0/16
+    Description: CIDR block for the VPC
+
+  PublicSubnet1Cidr:
     Type: String
-    Default: latest
-    Description: Docker image tag to deploy. This will be updated by CI/CD.
-  SecretArn:
+    Default: 10.0.1.0/24
+
+  PublicSubnet2Cidr:
     Type: String
-    Description: ARN of the AWS Secrets Manager secret for UniHockeySettings__David.
-    ConstraintDescription: Must be a valid Secrets Manager ARN.
-    
-  # --- PARAMETERS FOR APPLICATION ---
-  CassieEnvVarValue:
+    Default: 10.0.2.0/24
+
+  PrivateSubnet1Cidr:
     Type: String
-    Description: The plain string value for the UniHockeySettings__Cassie environment variable.
-    
-  # --- PARAMETERS FOR NETWORKING ---
-  AppSubnets:
-    Type: List<AWS::EC2::Subnet::Id>
-    Description: >
-      Comma-separated list of Subnet IDs. These MUST be public subnets 
-      as the Fargate tasks require public IPs for direct internet access.
-  VpcId:
-    Type: AWS::EC2::VPC::Id
-    Description: The VPC ID where the subnets are located.
+    Default: 10.0.101.0/24
+
+  PrivateSubnet2Cidr:
+    Type: String
+    Default: 10.0.102.0/24
+
+  AvailabilityZone1:
+    Type: String
+    Default: ap-southeast-2a
+
+  AvailabilityZone2:
+    Type: String
+    Default: ap-southeast-2b
 
 Resources:
-  # --- 1. ECS Cluster ---
-  ECSCluster:
-    Type: AWS::ECS::Cluster
-    Properties:
-      ClusterName: !Sub "${EnvironmentName}-WebAppCluster"
-      
-  # --- 2. Web App Security Group ---
 
-  # 2A. WebApp Security Group: Allows inbound traffic from the internet on port 8080.
-  WebAppSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
+  #####################
+  # VPC
+  #####################
+  MyVPC:
+    Type: AWS::EC2::VPC
     Properties:
-      GroupDescription: Allows 8080 traffic from the internet directly to the Fargate task.
-      VpcId: !Ref VpcId
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 8080
-          ToPort: 8080
-          # Source is the internet (0.0.0.0/0)
-          CidrIp: 0.0.0.0/0 
-      SecurityGroupEgress:
-        - IpProtocol: -1
-          CidrIp: 0.0.0.0/0
+      CidrBlock: !Ref VpcCidr
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-WebApp-SG"
-          
-  # --- 3. IAM Roles (CRITICAL for Secrets access) ---
-  ECSTaskExecutionRole:
-    Type: AWS::IAM::Role
+          Value: !Sub "${EnvName}-MyVPC"
+
+  #####################
+  # Internet Gateway
+  #####################
+  MyIGW:
+    Type: AWS::EC2::InternetGateway
     Properties:
-      RoleName: !Sub "${EnvironmentName}-ECS-TaskExecutionRole"
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: [ecs-tasks.amazonaws.com]
-            Action: ["sts:AssumeRole"]
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
-      Policies:
-        - PolicyName: SecretAccessPolicy
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action:
-                  - "secretsmanager:GetSecretValue"
-                Resource: !Ref SecretArn
-  
-  # --- 4. Task Definition ---
-  ECSTaskDefinition:
-    Type: AWS::ECS::TaskDefinition
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvName}-MyIGW"
+
+  AttachIGW:
+    Type: AWS::EC2::VPCGatewayAttachment
     Properties:
-      Family: !Sub "${EnvironmentName}-WebAppTaskDef"
-      RequiresCompatibilities:
-        - FARGATE
-      NetworkMode: awsvpc
-      Cpu: "256"
-      Memory: "512"
-      ExecutionRoleArn: !Ref ECSTaskExecutionRole
-      ContainerDefinitions:
-        - Name: web-app-container
-          Image: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ImageRepoName}:${ImageTag}"
-          PortMappings:
-            # Container listens on port 8080
-            - ContainerPort: 8080
-              Protocol: tcp
-          LogConfiguration:
-            LogDriver: awslogs
-            Options:
-              awslogs-group: !Ref CloudWatchLogGroup
-              awslogs-region: !Ref "AWS::Region"
-              awslogs-stream-prefix: ecs
-          Environment:
-            - Name: UniHockeySettings__Cassie
-              Value: !Ref CassieEnvVarValue
-          Secrets: 
-            - Name: UniHockeySettings__David
-              ValueFrom: !Ref SecretArn
-              
-  # --- 5. ECS Service (Standalone Fargate Task) ---
-  ECSService:
-    Type: AWS::ECS::Service
+      VpcId: !Ref MyVPC
+      InternetGatewayId: !Ref MyIGW
+    Metadata:
+      Name: !Sub "${EnvName}-AttachIGW"
+
+  #####################
+  # Public Route Table
+  #####################
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
     Properties:
-      Cluster: !Ref ECSCluster
-      ServiceName: !Sub "${EnvironmentName}-WebAppService"
-      TaskDefinition: !Ref ECSTaskDefinition
-      DesiredCount: 1
-      LaunchType: FARGATE
-      DeploymentConfiguration:
-        MaximumPercent: 200
-        MinimumHealthyPercent: 100
-      NetworkConfiguration:
-        AwsvpcConfiguration:
-          # CRITICAL CHANGE: Task needs a public IP to be accessible on the internet without an ALB
-          AssignPublicIp: ENABLED
-          Subnets: !Ref AppSubnets 
-          # Task uses the WebApp Security Group
-          SecurityGroups: 
-            - !GetAtt WebAppSecurityGroup.GroupId
-      # Removed LoadBalancers property entirely
-          
-  # --- 6. CloudWatch Log Group ---
-  CloudWatchLogGroup:
-    Type: AWS::Logs::LogGroup
+      VpcId: !Ref MyVPC
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvName}-PublicRouteTable"
+
+  PublicRouteInternet:
+    Type: AWS::EC2::Route
     Properties:
-      LogGroupName: !Sub "/ecs/${EnvironmentName}-WebApp"
-      RetentionInDays: 7
-      
-Outputs:
-  ClusterName:
-    Description: "The name of the ECS Cluster"
-    Value: !Ref ECSCluster
-  ServiceName:
-    Description: "The name of the ECS Service"
-    Value: !GetAtt ECSService.Name
-  
-  # Note: The public IP will be assigned to the running task, not the service itself.
-  # You will need to retrieve the IP from the ECS Console or API after deployment.
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref MyIGW
+    Metadata:
+      Name: !Sub "${EnvName}-PublicRouteInternet"
+
+  #####################
+  # Public Subnets
+  #####################
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: !Ref PublicSubnet1Cidr
+      AvailabilityZone: !Ref AvailabilityZone1
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvName}-PublicSubnet1"
+
+  PublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: !Ref PublicSubnet2Cidr
+      AvailabilityZone: !Ref AvailabilityZone2
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvName}-PublicSubnet2"
+
+  PublicSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet1
+      RouteTableId: !Ref PublicRouteTable
+    Metadata:
+      Name: !Sub "${EnvName}-PublicSubnet1RTA"
+
+  PublicSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet2
+      RouteTableId: !Ref PublicRouteTable
+    Metadata:
+      Name: !Sub "${EnvName}-PublicSubnet2RTA"
+
+  #####################
+  # Elastic IP for NAT
+  #####################
+  NatEIP:
+    Type: AWS::EC2::EIP
+    DependsOn: AttachIGW
+    Properties:
+      Domain: vpc
+    Metadata:
+      Name: !Sub "${EnvName}-NatEIP"
+
+  #####################
+  # NAT Gateway
+  #####################
+  MyNATGateway:
+    Type: AWS::EC2::NatGateway
+    DependsOn: AttachIGW
+    Properties:
+      AllocationId: !GetAtt NatEIP.AllocationId
+      SubnetId: !Ref PublicSubnet1
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvName}-MyNATGateway"
+
+  #####################
+  # Private Route Table
+  #####################
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref MyVPC
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvName}-PrivateRouteTable"
+
+  PrivateRouteNat:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref MyNATGateway
+    Metadata:
+      Name: !Sub "${EnvName}-PrivateRouteNat"
+
+  #####################
+  # Private Subnets
+  #####################
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: !Ref PrivateSubnet1Cidr
+      AvailabilityZone: !Ref AvailabilityZone1
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvName}-PrivateSubnet1"
+
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: !Ref PrivateSubnet2Cidr
+      AvailabilityZone: !Ref AvailabilityZone2
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvName}-PrivateSubnet2"
+
+  PrivateSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnet1
+      RouteTableId: !Ref PrivateRouteTable
+    Metadata:
+      Name: !Sub "${EnvName}-PrivateSubnet1RTA"
+
+  PrivateSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnet2
+      RouteTableId: !Ref PrivateRouteTable
+    Metadata:
+      Name: !Sub "${EnvName}-PrivateSubnet2RTA"
