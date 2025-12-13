@@ -40,11 +40,26 @@ Parameters:
     Default: "amazon/amazon-ecs-sample"
     Description: Docker image for the Fargate service
 
+  InitialTaskCount:
+    Type: Number
+    Default: 2
+    Description: The min/desired number of ECS tasks to run
+
+  ECSClusterSuffix:
+    Type: String
+    Default: "ECSCluster"
+    Description: Suffix for the ECS Cluster name
+
+  ECSServiceSuffix:
+    Type: String
+    Default: "ECSService"
+    Description: Suffix for the ECS Service name
+
 Resources:
 
-  #####################
-  # VPC, Subnets, IGW, NAT Gateway, Route Tables
-  #####################
+  # #####################
+  # # VPC, Subnets, IGW, NAT Gateway, Route Tables
+  # #####################
   MyVPC:
     Type: AWS::EC2::VPC
     Properties:
@@ -266,7 +281,7 @@ Resources:
   MyECSCluster:
     Type: AWS::ECS::Cluster
     Properties:
-      ClusterName: !Sub "${EnvName}-ECSCluster"
+      ClusterName: !Sub "${EnvName}-${ECSClusterSuffix}"
 
   #####################
   # ECS Task Execution Role
@@ -300,7 +315,7 @@ Resources:
       NetworkMode: awsvpc
       RequiresCompatibilities:
         - FARGATE
-      ExecutionRoleArn: !Ref MyECSTaskExecutionRole
+      ExecutionRoleArn: !GetAtt MyECSTaskExecutionRole.Arn
       ContainerDefinitions:
         - Name: app
           Image: !Ref ContainerImage
@@ -315,11 +330,11 @@ Resources:
     Type: AWS::ECS::Service
     DependsOn: ALBListener
     Properties:
-      ServiceName: !Sub "${EnvName}-ECSService"
+      ServiceName: !Sub "${EnvName}-${ECSServiceSuffix}"
       Cluster: !Ref MyECSCluster
       LaunchType: FARGATE
       TaskDefinition: !Ref MyECSTaskDef
-      DesiredCount: 3
+      DesiredCount: !Ref InitialTaskCount
       NetworkConfiguration:
         AwsvpcConfiguration:
           AssignPublicIp: DISABLED
@@ -332,3 +347,31 @@ Resources:
         - TargetGroupArn: !Ref ALBTargetGroup
           ContainerName: app
           ContainerPort: 80
+
+  # #####################
+  # # ECS Service Auto Scaling
+  # #####################
+  ECSServiceScalableTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    DependsOn:
+      - MyECSService
+    Properties:
+      MaxCapacity: 20
+      MinCapacity: !Ref InitialTaskCount
+      ResourceId: !Sub "service/${EnvName}-${ECSClusterSuffix}/${EnvName}-${ECSServiceSuffix}"
+      ScalableDimension: ecs:service:DesiredCount
+      ServiceNamespace: ecs
+
+  ECSServiceScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub "${EnvName}-ECSServiceScalingPolicy"
+      PolicyType: TargetTrackingScaling
+      ScalingTargetId: !Ref ECSServiceScalableTarget
+      TargetTrackingScalingPolicyConfiguration:
+        TargetValue: 2.0
+        PredefinedMetricSpecification:
+          PredefinedMetricType: ALBRequestCountPerTarget
+          ResourceLabel: !Sub "${MyALB.LoadBalancerFullName}/${ALBTargetGroup.TargetGroupFullName}"
+        ScaleInCooldown: 10
+        ScaleOutCooldown: 10
