@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using UniHockey;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,15 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.Configure<UniHockeySettings>(builder.Configuration.GetSection("UniHockeySettings"));
 builder.Services.AddHttpClient();
+builder.Services.AddMvc(o =>
+{
+    o.CacheProfiles.Add("GeneralCache", new CacheProfile
+    {
+        Duration = 30,
+        VaryByHeader = "Origin, Accept, Accept-Encoding, authorization, X-Test-Header"
+    });
+    o.EnableEndpointRouting = false;
+});
 
 var app = builder.Build();
 

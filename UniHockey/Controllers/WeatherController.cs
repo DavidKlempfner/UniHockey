@@ -18,8 +18,9 @@ namespace UniHockey.Controllers
             _httpClient = httpClient;
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
-        public async Task<string> Get()
+        [HttpGet("{id:int}")]
+        [ResponseCache(CacheProfileName = "GeneralCache")]
+        public async Task<string> Get(int id)
         {
             var containerHostname = Environment.MachineName;
             var processId = Environment.ProcessId;
@@ -44,7 +45,10 @@ namespace UniHockey.Controllers
                 externalData = $"Exception: {ex.Message}";
             }
 
-            return $"Hi! - {_david}, {_cassie} - {containerHostname}, {processId}, {osDescription}\n\nExternal API Response:\n{externalData}";
+            
+            var customRequestHeader = Request.Headers["X-Test-Header"];
+
+            return $"Hi! id = {id} - X-Test-Header: {customRequestHeader} - {_david}, {_cassie} - {containerHostname}, {processId}, {osDescription}\n\nExternal API Response:\n{externalData}";
         }
     }
 }
