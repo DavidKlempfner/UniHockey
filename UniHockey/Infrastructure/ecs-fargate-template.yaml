@@ -263,7 +263,7 @@ Resources:
       TargetType: ip
       HealthCheckProtocol: HTTP
       HealthCheckPort: "80"
-      HealthCheckPath: "/weather"
+      HealthCheckPath: "/health"
 
   ALBListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
