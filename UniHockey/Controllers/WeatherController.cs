@@ -60,7 +60,7 @@ namespace UniHockey.Controllers
 
             var customRequestHeader = Request.Headers["X-Test-Header"];
             var fromCloudfrontHeader = Request.Headers["X-CustomCloudfront-Header"];
-            //
+
             var headerEntries = Request.Headers
                 .Select(h => $"{h.Key}: {string.Join(", ", h.Value)}");
             string allHeaders = string.Join("; ", headerEntries);
