@@ -57,7 +57,6 @@ namespace UniHockey.Controllers
                 externalData = $"Exception: {ex.Message}";
             }
 
-
             var customRequestHeader = Request.Headers["X-Test-Header"];
             var fromCloudfrontHeader = Request.Headers["X-CustomCloudfront-Header"];
 
