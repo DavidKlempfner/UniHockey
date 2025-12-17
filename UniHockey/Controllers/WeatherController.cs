@@ -57,18 +57,17 @@ namespace UniHockey.Controllers
                 externalData = $"Exception: {ex.Message}";
             }
 
-            var customRequestHeader = Request.Headers["X-Test-Header"];
-            var fromCloudfrontHeader = Request.Headers["X-CustomCloudfront-Header"];
-
-            var headerEntries = Request.Headers
+            var reqHeaderEntries = Request.Headers
+                .OrderBy(h => h.Key, StringComparer.OrdinalIgnoreCase)
                 .Select(h => $"{h.Key}: {string.Join($", ", h.Value)}");
-            string allHeaders = string.Join(Environment.NewLine, headerEntries);
+            string allReqHeaders = string.Join(Environment.NewLine, reqHeaderEntries);
 
             var respHeaderEntries = Response.Headers
+                .OrderBy(h => h.Key, StringComparer.OrdinalIgnoreCase)
                 .Select(h => $"{h.Key}: {string.Join(", ", h.Value)}");
             string allRespHeaders = string.Join(Environment.NewLine, respHeaderEntries);
 
-            return $"Hi! id = {id} str = {str}\n\nAllHeaders: {allHeaders}\n\nallRespHeaders: {allRespHeaders}\n\n{_david}, {_cassie} - containerHostname = {containerHostname}, processID = {processId}, {osDescription}\n\nExternal API Response:\n{externalData}";
+            return $"\n\nAllHeaders:\n\n{allReqHeaders}\n\nallRespHeaders:\n\n{allRespHeaders}\n\nHi! id = {id} str = {str}{_david}, {_cassie} - containerHostname = {containerHostname}, processID = {processId}, {osDescription}\n\nExternal API Response:\n{externalData}";
         }
     }
 }
