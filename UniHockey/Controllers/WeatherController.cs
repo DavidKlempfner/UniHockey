@@ -22,6 +22,18 @@ namespace UniHockey.Controllers
         [ResponseCache(CacheProfileName = "GeneralCache")]
         public async Task<string> Get(int id)
         {
+            return await Test(id, null);
+        }
+
+        [HttpGet("{str:alpha}")]
+        [ResponseCache(CacheProfileName = "GeneralCache")]
+        public async Task<string> GetStr(string str)
+        {
+            return await Test(default, str);
+        }
+
+        private async Task<string> Test(int id, string? str)
+        {
             var containerHostname = Environment.MachineName;
             var processId = Environment.ProcessId;
             var osDescription = System.Runtime.InteropServices.RuntimeInformation.OSDescription;
@@ -45,10 +57,10 @@ namespace UniHockey.Controllers
                 externalData = $"Exception: {ex.Message}";
             }
 
-            
+
             var customRequestHeader = Request.Headers["X-Test-Header"];
 
-            return $"Hi! id = {id} - X-Test-Header: {customRequestHeader} - {_david}, {_cassie} - {containerHostname}, {processId}, {osDescription}\n\nExternal API Response:\n{externalData}";
+            return $"Hi! id = {id} str = {str} - X-Test-Header: {customRequestHeader} - {_david}, {_cassie} - {containerHostname}, {processId}, {osDescription}\n\nExternal API Response:\n{externalData}";
         }
     }
 }

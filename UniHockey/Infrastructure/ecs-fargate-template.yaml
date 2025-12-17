@@ -45,14 +45,14 @@ Parameters:
     Default: 2
     Description: The min/desired number of ECS tasks to run
 
-  ECSClusterSuffix:
+  EcsClusterSuffix:
     Type: String
-    Default: "ECSCluster"
+    Default: "EcsCluster"
     Description: Suffix for the ECS Cluster name
 
-  ECSServiceSuffix:
+  EcsServiceSuffix:
     Type: String
-    Default: "ECSService"
+    Default: "EcsService"
     Description: Suffix for the ECS Service name
 
 Resources:
@@ -281,7 +281,7 @@ Resources:
   MyECSCluster:
     Type: AWS::ECS::Cluster
     Properties:
-      ClusterName: !Sub "${EnvName}-${ECSClusterSuffix}"
+      ClusterName: !Sub "${EnvName}-${EcsClusterSuffix}"
 
   #####################
   # ECS Task Execution Role
@@ -330,7 +330,7 @@ Resources:
     Type: AWS::ECS::Service
     DependsOn: ALBListener
     Properties:
-      ServiceName: !Sub "${EnvName}-${ECSServiceSuffix}"
+      ServiceName: !Sub "${EnvName}-${EcsServiceSuffix}"
       Cluster: !Ref MyECSCluster
       LaunchType: FARGATE
       TaskDefinition: !Ref MyECSTaskDef
@@ -358,7 +358,7 @@ Resources:
     Properties:
       MaxCapacity: 20
       MinCapacity: !Ref InitialTaskCount
-      ResourceId: !Sub "service/${EnvName}-${ECSClusterSuffix}/${EnvName}-${ECSServiceSuffix}"
+      ResourceId: !Sub "service/${EnvName}-${EcsClusterSuffix}/${EnvName}-${EcsServiceSuffix}"
       ScalableDimension: ecs:service:DesiredCount
       ServiceNamespace: ecs
 
