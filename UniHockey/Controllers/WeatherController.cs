@@ -59,8 +59,17 @@ namespace UniHockey.Controllers
 
 
             var customRequestHeader = Request.Headers["X-Test-Header"];
+            var fromCloudfrontHeader = Request.Headers["X-CustomCloudfront-Header"];
+            //
+            var headerEntries = Request.Headers
+                .Select(h => $"{h.Key}: {string.Join(", ", h.Value)}");
+            string allHeaders = string.Join("; ", headerEntries);
 
-            return $"Hi! id = {id} str = {str} - X-Test-Header: {customRequestHeader} - {_david}, {_cassie} - {containerHostname}, {processId}, {osDescription}\n\nExternal API Response:\n{externalData}";
+            var respHeaderEntries = Response.Headers
+                .Select(h => $"{h.Key}: {string.Join(", ", h.Value)}");
+            string allRespHeaders = string.Join("; ", respHeaderEntries);
+
+            return $"Hi! id = {id} str = {str}\n\nAllHeaders: {allHeaders}\n\nallRespHeaders: {allRespHeaders}\n\n{_david}, {_cassie} - containerHostname = {containerHostname}, processID = {processId}, {osDescription}\n\nExternal API Response:\n{externalData}";
         }
     }
 }

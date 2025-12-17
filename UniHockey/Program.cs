@@ -15,7 +15,7 @@ builder.Services.AddMvc(o =>
 {
     o.CacheProfiles.Add("GeneralCache", new CacheProfile
     {
-        Duration = 30,
+        Duration = 12,
         VaryByHeader = "Origin, Accept, Accept-Encoding, authorization, X-Test-Header"
     });
     o.EnableEndpointRouting = false;
