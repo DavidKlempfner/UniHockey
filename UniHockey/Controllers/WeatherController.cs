@@ -61,12 +61,12 @@ namespace UniHockey.Controllers
             var fromCloudfrontHeader = Request.Headers["X-CustomCloudfront-Header"];
 
             var headerEntries = Request.Headers
-                .Select(h => $"{h.Key}: {string.Join(", ", h.Value)}");
-            string allHeaders = string.Join("; ", headerEntries);
+                .Select(h => $"{h.Key}: {string.Join($", ", h.Value)}");
+            string allHeaders = string.Join(Environment.NewLine, headerEntries);
 
             var respHeaderEntries = Response.Headers
                 .Select(h => $"{h.Key}: {string.Join(", ", h.Value)}");
-            string allRespHeaders = string.Join("; ", respHeaderEntries);
+            string allRespHeaders = string.Join(Environment.NewLine, respHeaderEntries);
 
             return $"Hi! id = {id} str = {str}\n\nAllHeaders: {allHeaders}\n\nallRespHeaders: {allRespHeaders}\n\n{_david}, {_cassie} - containerHostname = {containerHostname}, processID = {processId}, {osDescription}\n\nExternal API Response:\n{externalData}";
         }
