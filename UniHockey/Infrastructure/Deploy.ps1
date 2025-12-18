@@ -13,8 +13,8 @@ $PrivateSubnet2Cidr = "10.0.102.0/24"
 $AvailabilityZone1 = "ap-southeast-2a"
 $AvailabilityZone2 = "ap-southeast-2b"
 $InitialTaskCount = 2
-$ECSClusterSuffix= "ECSCluster"
-$ECSServiceSuffix = "ECSService"
+$EcsClusterSuffix= "ECSCluster"
+$EcsServiceSuffix = "ECSService"
 
 aws cloudformation deploy `
  --template-file $Dir/ecs-fargate-template.yaml `

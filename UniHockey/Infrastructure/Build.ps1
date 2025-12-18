@@ -13,3 +13,6 @@ aws ecr get-login-password --region $AwsRegion | docker login --username AWS --p
 
 docker push $ImageNameLatestTag
 docker push $ImageNameCommitHashTag
+
+#aws cloudformation delete-stack --stack-name UniHockeyApp-DevStack
+#aws cloudformation wait stack-delete-complete --stack-name UniHockeyApp-DevStack

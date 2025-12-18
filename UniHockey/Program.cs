@@ -16,7 +16,7 @@ builder.Services.AddMvc(o =>
     o.CacheProfiles.Add("GeneralCache", new CacheProfile
     {
         Duration = 12,
-        VaryByHeader = "Origin, Accept, Accept-Encoding, authorization, X-Test-Header"
+        VaryByHeader = "Origin, Accept, Accept-Encoding, authorization, X-CustomCloudfront-Header"
     });
     o.EnableEndpointRouting = false;
 });
