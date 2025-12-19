@@ -393,3 +393,37 @@ Resources:
           ResourceLabel: !Sub "${MyALB.LoadBalancerFullName}/${ALBTargetGroup.TargetGroupFullName}"
         ScaleInCooldown: 10
         ScaleOutCooldown: 10
+  
+  #####################
+  # CloudFront Distribution
+  #####################
+  MyCloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    DeletionPolicy: Retain
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        HttpVersion: http2
+        Comment: !Sub "Free Tier CloudFront for ${EnvName} ALB"
+        Origins:
+          - Id: ALBOrigin
+            DomainName: !GetAtt MyALB.DNSName
+            CustomOriginConfig:
+              HTTPPort: 80
+              OriginProtocolPolicy: http-only
+            OriginCustomHeaders:
+              - HeaderName: X-Origin-Verify
+                HeaderValue: '{{resolve:secretsmanager:XOriginVerifyHeaderValue}}'
+        DefaultCacheBehavior:
+          TargetOriginId: ALBOrigin
+          ViewerProtocolPolicy: allow-all # Support both http and https
+          AllowedMethods:
+            - GET
+            - HEAD
+          CachedMethods:
+            - GET
+            - HEAD
+          Compress: true
+          # UseOriginCacheControlHeaders-QueryStrings Policy ID
+          CachePolicyId: 4cc15a8a-d715-48a4-82b8-cc0b614638fe
+          # TODO: add X-Origin-Verify to params
