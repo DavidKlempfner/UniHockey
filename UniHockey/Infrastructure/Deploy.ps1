@@ -15,6 +15,7 @@ $AvailabilityZone2 = "ap-southeast-2b"
 $InitialTaskCount = 2
 $EcsClusterSuffix= "ECSCluster"
 $EcsServiceSuffix = "ECSService"
+$CloudfrontSecurityHeader = "X-Origin-Verify"
 
 aws cloudformation deploy `
  --template-file $Dir/ecs-fargate-template.yaml `
@@ -32,4 +33,5 @@ aws cloudformation deploy `
     InitialTaskCount=$InitialTaskCount `
     EcsClusterSuffix=$EcsClusterSuffix `
     EcsServiceSuffix=$EcsServiceSuffix `
+    CloudfrontSecurityHeader=$CloudfrontSecurityHeader `
  --capabilities CAPABILITY_NAMED_IAM

@@ -55,6 +55,11 @@ Parameters:
     Default: "EcsService"
     Description: Suffix for the ECS Service name
 
+  CloudfrontSecurityHeader:
+    Type: String
+    Default: "X-Origin-Verify"
+    Description: Forces users to use Cloudfront instead of ALB. Forwarded from Cloudfront to the ALB and verified by the ALB.
+
 Resources:
 
   # #####################
@@ -287,7 +292,7 @@ Resources:
       Conditions:
         - Field: http-header
           HttpHeaderConfig:
-            HttpHeaderName: X-Origin-Verify
+            HttpHeaderName: !Ref CloudfrontSecurityHeader
             Values:
                 - '{{resolve:secretsmanager:XOriginVerifyHeaderValue}}'
       ListenerArn: !Ref ALBListener
@@ -397,33 +402,32 @@ Resources:
   #####################
   # CloudFront Distribution
   #####################
-  MyCloudFrontDistribution:
-    Type: AWS::CloudFront::Distribution
-    DeletionPolicy: Retain
-    Properties:
-      DistributionConfig:
-        Enabled: true
-        HttpVersion: http2
-        Comment: !Sub "Free Tier CloudFront for ${EnvName} ALB"
-        Origins:
-          - Id: ALBOrigin
-            DomainName: !GetAtt MyALB.DNSName
-            CustomOriginConfig:
-              HTTPPort: 80
-              OriginProtocolPolicy: http-only
-            OriginCustomHeaders:
-              - HeaderName: X-Origin-Verify
-                HeaderValue: '{{resolve:secretsmanager:XOriginVerifyHeaderValue}}'
-        DefaultCacheBehavior:
-          TargetOriginId: ALBOrigin
-          ViewerProtocolPolicy: allow-all # Support both http and https
-          AllowedMethods:
-            - GET
-            - HEAD
-          CachedMethods:
-            - GET
-            - HEAD
-          Compress: true
-          # UseOriginCacheControlHeaders-QueryStrings Policy ID
-          CachePolicyId: 4cc15a8a-d715-48a4-82b8-cc0b614638fe
-          # TODO: add X-Origin-Verify to params
+  # MyCloudFrontDistribution:
+  #   Type: AWS::CloudFront::Distribution
+  #   DeletionPolicy: Retain
+  #   Properties:
+  #     DistributionConfig:
+  #       Enabled: true
+  #       HttpVersion: http2
+  #       Comment: !Sub "${EnvName}"
+  #       Origins:
+  #         - Id: ALBOrigin
+  #           DomainName: !GetAtt MyALB.DNSName
+  #           CustomOriginConfig:
+  #             HTTPPort: 80
+  #             OriginProtocolPolicy: http-only
+  #           OriginCustomHeaders:
+  #             - HeaderName: !Ref CloudfrontSecurityHeader
+  #               HeaderValue: '{{resolve:secretsmanager:XOriginVerifyHeaderValue}}'
+  #       DefaultCacheBehavior:
+  #         TargetOriginId: ALBOrigin
+  #         ViewerProtocolPolicy: allow-all # Support both http and https
+  #         AllowedMethods:
+  #           - GET
+  #           - HEAD
+  #         CachedMethods:
+  #           - GET
+  #           - HEAD
+  #         Compress: true
+  #         # UseOriginCacheControlHeaders-QueryStrings Policy ID
+  #         CachePolicyId: 4cc15a8a-d715-48a4-82b8-cc0b614638fe
