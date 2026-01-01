@@ -16,6 +16,9 @@ $InitialTaskCount = 2
 $EcsClusterSuffix= "ECSCluster"
 $EcsServiceSuffix = "ECSService"
 $CloudfrontSecurityHeader = "X-Origin-Verify"
+$AlbAcmCertificateId = "c0c1681d-34f6-4691-ae71-fd08158d5466"
+$CloudFrontAcmCertificateId = "627e39bb-164b-49ed-a211-6c190bbc413b"
+$CloudFrontAlternateDomainName = "thefirecop.click"
 
 aws cloudformation deploy `
  --template-file $Dir/ecs-fargate-template.yaml `
@@ -34,4 +37,7 @@ aws cloudformation deploy `
     EcsClusterSuffix=$EcsClusterSuffix `
     EcsServiceSuffix=$EcsServiceSuffix `
     CloudfrontSecurityHeader=$CloudfrontSecurityHeader `
+    AlbAcmCertificateId=$AlbAcmCertificateId `
+    CloudFrontAcmCertificateId=$CloudFrontAcmCertificateId `
+    CloudFrontAlternateDomainName=$CloudFrontAlternateDomainName `
  --capabilities CAPABILITY_NAMED_IAM

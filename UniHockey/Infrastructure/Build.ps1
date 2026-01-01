@@ -14,5 +14,6 @@ aws ecr get-login-password --region $AwsRegion | docker login --username AWS --p
 docker push $ImageNameLatestTag
 docker push $ImageNameCommitHashTag
 
+#NOTE! Must first remove value in Alternate domain names in cloudfront distribution
 #aws cloudformation delete-stack --stack-name UniHockeyApp-DevStack
 #aws cloudformation wait stack-delete-complete --stack-name UniHockeyApp-DevStack
