@@ -1,0 +1,128 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Fire Cop</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-start: #0b0f14;
+            --bg-end: #1a1f2b;
+            --accent: #ff6a00;
+            --accent-soft: rgba(255, 106, 0, 0.4);
+            --text-main: #f5f7fa;
+            --text-muted: #c7cbd6;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at top, var(--bg-end), var(--bg-start));
+            color: var(--text-main);
+            font-family: "Inter", system-ui, sans-serif;
+        }
+
+        .card {
+            max-width: 900px;
+            padding: 48px 40px 56px;
+            border-radius: 24px;
+            background: linear-gradient( 180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02) );
+            backdrop-filter: blur(10px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .card::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: linear-gradient( 120deg, transparent 20%, var(--accent-soft), transparent 80% );
+                opacity: 0.25;
+                pointer-events: none;
+            }
+
+        h1 {
+            font-family: "Cinzel", serif;
+            font-weight: 800;
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            margin: 0 0 32px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--text-main);
+            text-shadow: 0 0 10px rgba(255, 106, 0, 0.25), 0 4px 20px rgba(0, 0, 0, 0.6);
+        }
+
+        .image-wrapper {
+            margin-bottom: 32px;
+        }
+
+            .image-wrapper img {
+                max-width: 100%;
+                height: auto;
+                border-radius: 16px;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 0 40px rgba(255, 106, 0, 0.15);
+            }
+
+        .quote {
+            font-size: clamp(1rem, 2.2vw, 1.25rem);
+            line-height: 1.7;
+            color: var(--text-muted);
+            margin: 0 auto;
+            max-width: 700px;
+        }
+
+            .quote p {
+                margin: 0 0 16px;
+            }
+
+                .quote p:last-child {
+                    margin-bottom: 0;
+                }
+
+            .quote em {
+                color: var(--text-main);
+                font-style: normal;
+                font-weight: 600;
+            }
+
+        footer {
+            margin-top: 36px;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 0.05em;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+
+        <h1>Never fear, Fire Cop is here.</h1>
+
+        <div class="image-wrapper">
+            <img src="images/firecop.jpg" alt="Fire Cop" />
+        </div>
+
+        <div class="quote">
+            <p>“No fire cop, don’t shoot the fires, you’re making them worse!”</p>
+            <p><em>“You miss read the assignment. You were supposed to hose the rioters!”</em></p>
+        </div>
+
+        <footer>
+            Public Safety • Questionable Tactics
+        </footer>
+    </div>
+</body>
+</html>
