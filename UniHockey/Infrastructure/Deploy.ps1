@@ -3,8 +3,23 @@ $Dir = "C:\Develop\UniHockey\UniHockey\Infrastructure"
 cd $Dir
 . "$Dir\Variables.ps1"
 
-$AppName = "UniHockeyApp"
 $EnvName = "Dev"
+
+if ($EnvName -eq "Dev") {
+    $AlbAcmCertificateId = "7f7ca63d-bad2-4367-97b6-8df7e877886c"
+    $CloudFrontAcmCertificateId = "6681c99b-10d9-4678-8e42-9377369495b4"
+    $WebsiteDomain = "thefirecopdev.click"
+    $Route53HostedZoneId = "Z08233952K4BIGYZS2K8I"
+}
+elseif ($EnvName -eq "Prod") {
+    $EnvName = "Prod"
+    $AlbAcmCertificateId = "c0c1681d-34f6-4691-ae71-fd08158d5466"
+    $CloudFrontAcmCertificateId = "627e39bb-164b-49ed-a211-6c190bbc413b"
+    $WebsiteDomain = "thefirecop.click"
+    $Route53HostedZoneId = "Z10238621INYV4M8OF8YJ"
+}
+
+$AppName = "UniHockeyApp$EnvName"
 $VpcCidr = "10.0.0.0/16"
 $PublicSubnet1Cidr = "10.0.1.0/24"
 $PublicSubnet2Cidr = "10.0.2.0/24"
@@ -16,10 +31,6 @@ $InitialTaskCount = 2
 $EcsClusterSuffix= "ECSCluster"
 $EcsServiceSuffix = "ECSService"
 $CloudfrontSecurityHeader = "X-Origin-Verify"
-$AlbAcmCertificateId = "c0c1681d-34f6-4691-ae71-fd08158d5466"
-$CloudFrontAcmCertificateId = "627e39bb-164b-49ed-a211-6c190bbc413b"
-$WebsiteDomain = "thefirecop.click"
-$Route53HostedZoneId="Z10238621INYV4M8OF8YJ"
 
 aws cloudformation deploy `
  --template-file $Dir/ecs-fargate-template.yaml `
