@@ -4,6 +4,8 @@ cd $Dir
 . "$Dir\Variables.ps1"
 
 $EnvName = "Dev"
+$AppName = "UniHockeyApp$EnvName"
+$StackName = "$AppName-Stack"
 
 if ($EnvName -eq "Dev") {
     $AlbAcmCertificateId = "7f7ca63d-bad2-4367-97b6-8df7e877886c"
@@ -19,7 +21,6 @@ elseif ($EnvName -eq "Prod") {
     $Route53HostedZoneId = "Z10238621INYV4M8OF8YJ"
 }
 
-$AppName = "UniHockeyApp$EnvName"
 $VpcCidr = "10.0.0.0/16"
 $PublicSubnet1Cidr = "10.0.1.0/24"
 $PublicSubnet2Cidr = "10.0.2.0/24"
@@ -34,7 +35,7 @@ $CloudfrontSecurityHeader = "X-Origin-Verify"
 
 aws cloudformation deploy `
  --template-file $Dir/ecs-fargate-template.yaml `
- --stack-name $AppName-$($EnvName)Stack `
+ --stack-name $StackName `
  --parameter-overrides `
     EnvName=$EnvName `
     VpcCidr=$VpcCidr `
@@ -54,3 +55,7 @@ aws cloudformation deploy `
     WebsiteDomain=$WebsiteDomain `
     Route53HostedZoneId=$Route53HostedZoneId `
  --capabilities CAPABILITY_NAMED_IAM
+
+#NOTE! Must first remove value in Alternate domain names in cloudfront distribution AND disable the distribution
+#aws cloudformation delete-stack --stack-name $StackName
+#aws cloudformation wait stack-delete-complete --stack-name $StackName
