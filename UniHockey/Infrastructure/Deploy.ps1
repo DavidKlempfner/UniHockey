@@ -74,8 +74,9 @@ aws cloudformation deploy `
  --capabilities CAPABILITY_NAMED_IAM
 
 #NOTE! Must first remove value in Alternate domain names in cloudfront distribution AND disable the distribution
-#aws cloudformation delete-stack --stack-name $RegionalStackName
-#aws cloudformation wait stack-delete-complete --stack-name $RegionalStackName
+#aws cloudformation delete-stack --stack-name $RegionalStackName --region $AwsRegion
+#aws cloudformation wait stack-delete-complete --stack-name $RegionalStackName --region $AwsRegion
 
-#aws cloudformation delete-stack --stack-name $GlobalStackName
-#aws cloudformation wait stack-delete-complete --stack-name $GlobalStackName
+#Note! Must first diassociate the cloudfront distribution from the WAF
+#aws cloudformation delete-stack --stack-name $GlobalStackName --region "us-east-1"
+#aws cloudformation wait stack-delete-complete --stack-name $GlobalStackName --region "us-east-1"
