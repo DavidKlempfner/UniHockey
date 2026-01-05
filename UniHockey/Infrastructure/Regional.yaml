@@ -80,8 +80,15 @@ Parameters:
     Default: Z10238621INYV4M8OF8YJ
     Description: Route53 hosted zone ID for the website domain
 
-Resources:
+  WebACLArn:
+    Type: String
+    Default: ""
+    Description: (Optional) WAF WebACL ARN to associate with CloudFront distribution
 
+Conditions:
+  ShouldUseWebACL: !Not [ !Equals [ !Ref WebACLArn, "" ] ]
+
+Resources:
   # #####################
   # # VPC, Subnets, IGW, NAT Gateway, Route Tables
   # #####################
@@ -448,6 +455,10 @@ Resources:
     Properties:
       DistributionConfig:
         Enabled: true
+        WebACLId: !If
+          - ShouldUseWebACL
+          - !Ref WebACLArn
+          - !Ref AWS::NoValue
         HttpVersion: http2
         Comment: !Sub "${EnvName}"
         Aliases:
@@ -457,7 +468,7 @@ Resources:
           SslSupportMethod: sni-only
           MinimumProtocolVersion: TLSv1.2_2021
         Origins:
-          - Id: ALBOrigin
+          - Id: !Sub "ALBOrigin${EnvName}"
             DomainName: !GetAtt MyALB.DNSName
             CustomOriginConfig:
               HTTPSPort: 443
@@ -466,7 +477,7 @@ Resources:
               - HeaderName: !Ref CloudfrontSecurityHeader
                 HeaderValue: '{{resolve:secretsmanager:XOriginVerifyHeaderValue}}'
         DefaultCacheBehavior:
-          TargetOriginId: ALBOrigin
+          TargetOriginId: !Sub "ALBOrigin${EnvName}"
           ViewerProtocolPolicy: redirect-to-https
           AllowedMethods: [GET, HEAD]
           CachedMethods: [GET, HEAD]

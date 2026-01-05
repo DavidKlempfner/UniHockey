@@ -1,0 +1,54 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Resources deployed in the Global region (us-east-1), including WAF for CloudFront
+
+Parameters:
+  EnvName:
+    Type: String
+    Default: Dev
+    Description: Environment name prefix
+
+  DevEnvAllowedIP:
+    Type: String
+    Default: 115.64.91.123/32
+    Description: IP address allowed to access the application in Dev environment (CIDR notation)
+
+Resources:
+  #####################
+  # WAF (CloudFront – Global)
+  #####################
+  AllowedIPSet:
+    Type: AWS::WAFv2::IPSet
+    Properties:
+      Name: !Sub "${EnvName}-AllowedIPSet"
+      Scope: CLOUDFRONT
+      IPAddressVersion: IPV4
+      Addresses:
+        - !Ref DevEnvAllowedIP
+
+  WebACL:
+    Type: AWS::WAFv2::WebACL
+    Properties:
+      Name: !Sub "${EnvName}-WebACL"
+      Scope: CLOUDFRONT
+      DefaultAction:
+        Block: {}
+      VisibilityConfig:
+        SampledRequestsEnabled: true
+        CloudWatchMetricsEnabled: true
+        MetricName: !Sub "${EnvName}-WebACL"
+      Rules:
+        - Name: AllowOnlyThisIP
+          Priority: 0
+          Action:
+            Allow: {}
+          Statement:
+            IPSetReferenceStatement:
+              Arn: !GetAtt AllowedIPSet.Arn
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: AllowOnlyThisIP
+
+Outputs:
+  WebACLArn:
+    Value: !GetAtt WebACL.Arn

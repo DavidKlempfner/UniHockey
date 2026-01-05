@@ -3,16 +3,34 @@ $Dir = "C:\Develop\UniHockey\UniHockey\Infrastructure"
 cd $Dir
 . "$Dir\Variables.ps1"
 
-$EnvName = "Prod"
+$EnvName = "Staging"
 $AppName = "UniHockeyApp$EnvName"
-$StackName = "$AppName-Stack"
+$GlobalStackName = "$AppName-GlobalStack"
+$RegionalStackName = "$AppName-RegionalStack"
 $RootWebsiteDomain = "thefirecop.click"
 
-if ($EnvName -eq "Prod") {
-    $WebsiteDomain = $RootWebsiteDomain.ToLower()
+$IsProd = $EnvName -eq "Prod"
+$WebACLArn = ""
+
+if ($IsProd) {
+    $WebsiteDomain = $RootWebsiteDomain.ToLower()    
 }
 else {
     $WebsiteDomain = "$EnvName.$RootWebsiteDomain".ToLower()
+
+    $DevEnvAllowedIP = "115.64.91.123/32"
+
+    #Deploy WAF to block all IPs except DevEnvAllowedIP. Must be deployed in the global region (us-east-1).
+    aws cloudformation deploy `
+     --template-file $Dir/Global.yaml `
+     --stack-name $GlobalStackName `
+     --region "us-east-1" `
+     --parameter-overrides `
+        EnvName=$EnvName `
+        DevEnvAllowedIP=$DevEnvAllowedIP `
+     --capabilities CAPABILITY_NAMED_IAM
+
+     $WebACLArn = aws cloudformation describe-stacks --stack-name $GlobalStackName --region us-east-1 --query "Stacks[0].Outputs[?OutputKey=='WebACLArn'].OutputValue" --output text
 }
 
 $VpcCidr = "10.0.0.0/16"
@@ -31,8 +49,9 @@ $CloudFrontAcmCertificateId = "b087dd39-1e8a-4001-8dbf-26bf6be7a7fc"
 $Route53HostedZoneId = "Z10238621INYV4M8OF8YJ"
 
 aws cloudformation deploy `
- --template-file $Dir/ecs-fargate-template.yaml `
- --stack-name $StackName `
+ --template-file $Dir/Regional.yaml `
+ --stack-name $RegionalStackName `
+ --region $AwsRegion `
  --parameter-overrides `
     EnvName=$EnvName `
     VpcCidr=$VpcCidr `
@@ -51,8 +70,12 @@ aws cloudformation deploy `
     CloudFrontAcmCertificateId=$CloudFrontAcmCertificateId `
     WebsiteDomain=$WebsiteDomain `
     Route53HostedZoneId=$Route53HostedZoneId `
+    WebACLArn=$WebACLArn `
  --capabilities CAPABILITY_NAMED_IAM
 
 #NOTE! Must first remove value in Alternate domain names in cloudfront distribution AND disable the distribution
-#aws cloudformation delete-stack --stack-name $StackName
-#aws cloudformation wait stack-delete-complete --stack-name $StackName
+#aws cloudformation delete-stack --stack-name $RegionalStackName
+#aws cloudformation wait stack-delete-complete --stack-name $RegionalStackName
+
+#aws cloudformation delete-stack --stack-name $GlobalStackName
+#aws cloudformation wait stack-delete-complete --stack-name $GlobalStackName
