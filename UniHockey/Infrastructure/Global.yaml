@@ -7,7 +7,7 @@ Parameters:
     Default: Dev
     Description: Environment name prefix
 
-  DevEnvAllowedIP:
+  DevEnvAllowedIpCIDR:
     Type: String
     Default: 115.64.91.123/32
     Description: IP address allowed to access the application in Dev environment (CIDR notation)
@@ -23,7 +23,7 @@ Resources:
       Scope: CLOUDFRONT
       IPAddressVersion: IPV4
       Addresses:
-        - !Ref DevEnvAllowedIP
+        - !Ref DevEnvAllowedIpCIDR
 
   WebACL:
     Type: AWS::WAFv2::WebACL

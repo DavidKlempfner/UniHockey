@@ -15,9 +15,6 @@ docker push $ImageNameLatestTag
 docker push $ImageNameCommitHashTag
 
 #TODO:
-#Set up IP restrictions for dev account
-#Set up PrivateLink for Cloudfront -> ALB
-#Set up Lambda@Edge
-#Learn WAF
 #Learn API Gateway
-#Id: ALBOrigin #TODO RENAME WITH ENVNAME
+#Set up PrivateLink for Cloudfront -> ALB
+#Set up Lambda@Edge and log request from Cloudfront -> ALB

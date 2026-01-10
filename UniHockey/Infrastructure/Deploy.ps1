@@ -3,7 +3,7 @@ $Dir = "C:\Develop\UniHockey\UniHockey\Infrastructure"
 cd $Dir
 . "$Dir\Variables.ps1"
 
-$EnvName = "Staging"
+$EnvName = "Prod"
 $AppName = "UniHockeyApp$EnvName"
 $GlobalStackName = "$AppName-GlobalStack"
 $RegionalStackName = "$AppName-RegionalStack"
@@ -13,12 +13,15 @@ $IsProd = $EnvName -eq "Prod"
 $WebACLArn = ""
 
 if ($IsProd) {
-    $WebsiteDomain = $RootWebsiteDomain.ToLower()    
+    Write-Host "Skipping first deployment $(Get-Date -Format 'HH:mm:ss')"
+    $WebsiteDomain = $RootWebsiteDomain.ToLower()
 }
 else {
+    Write-Host "Starting first deployment $(Get-Date -Format 'HH:mm:ss')"
     $WebsiteDomain = "$EnvName.$RootWebsiteDomain".ToLower()
 
-    $DevEnvAllowedIP = "115.64.91.123/32"
+    $CurrentIP = (Invoke-RestMethod -Uri "https://api.ipify.org") # NOTE: THIS WILL NOT WORK IN A PIPELINE, ONLY USE THIS FOR LOCAL DEPLOYMENTS.
+    $DevEnvAllowedIpCIDR = "$CurrentIP/32"
 
     #Deploy WAF to block all IPs except DevEnvAllowedIP. Must be deployed in the global region (us-east-1).
     aws cloudformation deploy `
@@ -27,11 +30,13 @@ else {
      --region "us-east-1" `
      --parameter-overrides `
         EnvName=$EnvName `
-        DevEnvAllowedIP=$DevEnvAllowedIP `
+        DevEnvAllowedIpCIDR=$DevEnvAllowedIpCIDR `
      --capabilities CAPABILITY_NAMED_IAM
 
      $WebACLArn = aws cloudformation describe-stacks --stack-name $GlobalStackName --region us-east-1 --query "Stacks[0].Outputs[?OutputKey=='WebACLArn'].OutputValue" --output text
 }
+
+Write-Host "Starting second deployment $(Get-Date -Format 'HH:mm:ss')"
 
 $VpcCidr = "10.0.0.0/16"
 $PublicSubnet1Cidr = "10.0.1.0/24"
@@ -72,6 +77,8 @@ aws cloudformation deploy `
     Route53HostedZoneId=$Route53HostedZoneId `
     WebACLArn=$WebACLArn `
  --capabilities CAPABILITY_NAMED_IAM
+
+Write-Host "Finished at $(Get-Date -Format 'HH:mm:ss')"
 
 #NOTE! Must first remove value in Alternate domain names in cloudfront distribution AND disable the distribution
 #aws cloudformation delete-stack --stack-name $RegionalStackName --region $AwsRegion

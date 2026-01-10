@@ -85,6 +85,11 @@ Parameters:
     Default: ""
     Description: (Optional) WAF WebACL ARN to associate with CloudFront distribution
 
+  CloudFrontPrefixListId:
+    Type: String
+    Default: "pl-b8a742d1"
+    Description: CloudFront origin-facing managed prefix list id (e.g. pl-xxxxxxxx). ALB will allow inbound only from this prefix list.
+
 Conditions:
   ShouldUseWebACL: !Not [ !Equals [ !Ref WebACLArn, "" ] ]
 
@@ -237,15 +242,12 @@ Resources:
     Properties:
       GroupDescription: ALB SG
       VpcId: !Ref MyVPC
+      # Only allow inbound from CloudFront managed prefix list (pass prefix list id via parameter)
       SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
-          CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
           FromPort: 443
           ToPort: 443
-          CidrIp: 0.0.0.0/0
+          SourcePrefixListId: !Ref CloudFrontPrefixListId
       SecurityGroupEgress:
         - IpProtocol: -1
           FromPort: -1
@@ -302,19 +304,6 @@ Resources:
   #####################
   # ALB Listeners
   #####################
-  ALBHttpListener:
-    Type: AWS::ElasticLoadBalancingV2::Listener
-    Properties:
-      LoadBalancerArn: !Ref MyALB
-      Port: 80
-      Protocol: HTTP
-      DefaultActions:
-        - Type: redirect
-          RedirectConfig:
-            Protocol: HTTPS
-            Port: "443"
-            StatusCode: HTTP_301
-
   ALBHttpsListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
@@ -482,8 +471,8 @@ Resources:
           AllowedMethods: [GET, HEAD]
           CachedMethods: [GET, HEAD]
           Compress: true
-          # UseOriginCacheControlHeaders-QueryStrings Policy ID
-          CachePolicyId: 4cc15a8a-d715-48a4-82b8-cc0b614638fe
+          CachePolicyId: 4cc15a8a-d715-48a4-82b8-cc0b614638fe #UseOriginCacheControlHeaders-QueryStrings
+          ResponseHeadersPolicyId: 67f7725c-6f97-4210-82d7-5512b31e9d03 #Managed-SecurityHeadersPolicy
 
   #####################
   # Route53 Records
